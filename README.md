@@ -4,11 +4,11 @@ This theme uses Astro v5 and Tailwind CSS v4. It is designed so that it can be u
 
 ## Quickstart
 
-1. To get started, first install all necessary packages with `npm install` or `pnpm install`, then run an initial build to make sure the setup works `npm run build` or `pnpm build`.
+1. To get started, first install all necessary packages with `npm install` or `pnpm install`, then run an initial build to make sure the setup works with `npm run build` or `pnpm build`.
 2. Copy the Pagefind build (for site search) to be available for the dev environment. This varies depending on your OS. I've created a few commands to help.
    - For Windows, run `npm run winsearch`
    - For OSX or Linux, run `npm run osxsearch`
-3. Next, you'll want to configure your site i18n setup (one language, or multiple). Simply run the command `npm run config-i18n` and follow the script instructions to get setup! For further information, see the [i18n documentation](https://cosmicthemes.com/docs/i18n/).
+3. Next, you'll want to configure your site i18n setup (one language, or multiple). Simply run the command `npm run docs:config-i18n` and follow the script instructions to get setup! For further information, see the [i18n documentation](https://cosmicthemes.com/docs/i18n/).
 4. Now you can setup the site to your liking!
    - [Style customization](https://cosmicthemes.com/docs/styles/)
    - [Content editing](https://cosmicthemes.com/docs/content/)
