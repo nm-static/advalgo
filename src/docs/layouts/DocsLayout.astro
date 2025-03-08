@@ -14,6 +14,10 @@ import SidebarCta from "@/docs/components/cta/SidebarCta.astro";
 
 // utils
 import { getAdjacentPages } from "@/docs/js/docsUtils";
+import { getLocaleFromUrl } from "@/docs/js/localeUtils";
+import { siteSettings } from "@/docs/config/siteSettings.json";
+
+const currLocale = getLocaleFromUrl(Astro.url);
 
 interface Props {
 	doc: CollectionEntry<"docs">;
@@ -32,7 +36,7 @@ const filteredHeadings = headings.filter(
 );
 
 // Get adjacent pages
-const { prev, next } = await getAdjacentPages(doc.id, "en");
+const { prev, next } = await getAdjacentPages(doc.id, currLocale);
 ---
 
 <BaseLayoutDocs title={title} description={description}>
@@ -82,7 +86,7 @@ const { prev, next } = await getAdjacentPages(doc.id, "en");
 				</div>
 
 				{/* Previous/Next Navigation */}
-				<DocsPagination prev={prev} next={next} />
+				{siteSettings.pagination && <DocsPagination prev={prev} next={next} />}
 			</div>
 		</main>
 
