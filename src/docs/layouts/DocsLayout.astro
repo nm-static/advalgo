@@ -10,6 +10,7 @@ import SidebarNav from "@/docs/components/nav/SidebarNav.astro";
 import TocLink from "@/docs/components/table-of-contents/TocLink.astro";
 import TableOfContents from "@/docs/components/table-of-contents/TableOfContents.astro";
 import DocsPagination from "@/docs/components/nav/DocsPagination.astro";
+import SidebarCta from "@/docs/components/cta/SidebarCta.astro";
 
 // utils
 import { getAdjacentPages } from "@/docs/js/docsUtils";
@@ -92,6 +93,8 @@ const { prev, next } = await getAdjacentPages(doc.id, "en");
 					class="max-h-[calc(100vh-var(--nav-height))] overflow-y-auto pt-(--main-content-pt) pb-4"
 				>
 					<TableOfContents headings={filteredHeadings} minHeadingLevel={minHeadingLevel} />
+
+					<SidebarCta class="mt-10 mr-5 2xl:mr-12" />
 				</div>
 			</div>
 		</aside>
