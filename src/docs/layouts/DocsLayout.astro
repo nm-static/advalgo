@@ -59,7 +59,7 @@ const { prev, next } = await getAdjacentPages(doc.id, "en");
 						class="bg-background absolute top-full right-0 left-0 space-y-1 border-b px-4 pt-2 pb-4"
 					>
 						{
-							headings.map((heading) => (
+							filteredHeadings.map((heading) => (
 								<TocLink heading={heading} minHeadingLevel={minHeadingLevel} />
 							))
 						}
