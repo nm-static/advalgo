@@ -69,9 +69,4 @@ export default defineConfig({
 	vite: {
 		plugins: [tailwindcss()],
 	},
-
-	// this is used by default with Starwind UI
-	experimental: {
-		svg: true,
-	},
 });
