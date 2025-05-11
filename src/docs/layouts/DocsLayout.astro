@@ -1,21 +1,17 @@
 ---
 import type { CollectionEntry } from "astro:content";
 
-// layout
-import BaseLayoutDocs from "./BaseLayoutDocs.astro";
-
-// components
+import SidebarCta from "@/docs/components/cta/SidebarCta.astro";
+import DocsPagination from "@/docs/components/nav/DocsPagination.astro";
 import Nav from "@/docs/components/nav/Nav.astro";
 import SidebarNav from "@/docs/components/nav/SidebarNav.astro";
-import TocLink from "@/docs/components/table-of-contents/TocLink.astro";
 import TableOfContents from "@/docs/components/table-of-contents/TableOfContents.astro";
-import DocsPagination from "@/docs/components/nav/DocsPagination.astro";
-import SidebarCta from "@/docs/components/cta/SidebarCta.astro";
-
-// utils
+import TocLink from "@/docs/components/table-of-contents/TocLink.astro";
+import { siteSettings } from "@/docs/config/siteSettings.json";
 import { getAdjacentPages } from "@/docs/js/docsUtils";
 import { getLocaleFromUrl } from "@/docs/js/localeUtils";
-import { siteSettings } from "@/docs/config/siteSettings.json";
+
+import BaseLayoutDocs from "./BaseLayoutDocs.astro";
 
 const currLocale = getLocaleFromUrl(Astro.url);
 
