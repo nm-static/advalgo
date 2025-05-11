@@ -67,5 +67,9 @@ export default defineConfig({
 
 	vite: {
 		plugins: [tailwindcss()],
+    // stop inlining short scripts to fix issues with ClientRouter
+		build: {
+			assetsInlineLimit: 0,
+		},
 	},
 });
