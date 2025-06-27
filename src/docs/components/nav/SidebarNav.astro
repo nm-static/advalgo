@@ -3,14 +3,21 @@
  * * This is both the mobile and desktop nav
  */
 import { getCollection } from "astro:content";
+import { Icon } from "astro-icon/components";
 
+import { siteSettings } from "@/docs/config/siteSettings.json";
 import { docsRoute, getOrderedSectionIds, getSectionTitle } from "@/docs/js/docsUtils";
 import { filterCollectionByLanguage } from "@/docs/js/localeUtils";
 import { getLocaleFromUrl } from "@/docs/js/localeUtils";
-import { getTranslatedData } from "@/docs/js/translationUtils";
+import { getLocalizedRoute, getTranslatedData } from "@/docs/js/translationUtils";
 
 import SidebarLink from "./SidebarLink.astro";
 
+interface Props {
+	sectionId?: string;
+}
+
+const { sectionId = "main" } = Astro.props;
 const currLocale = getLocaleFromUrl(Astro.url);
 
 // Get all non-draft docs
@@ -18,20 +25,70 @@ const allDocs = await getCollection("docs", ({ data }) => {
 	return data.draft !== true;
 });
 
+// Map to store the first page URL for each section
+const firstPagesMap = new Map();
+
 // get rid of pages from other languages and remove locale from slug
 const filteredDocs = filterCollectionByLanguage(allDocs, currLocale);
 
+// Get the current section configuration
+const currentSection = siteSettings.docsSections?.find((s) => s.id === sectionId) || {
+	id: "main",
+	route: docsRoute,
+	title: "Documentation",
+};
+
+// Find the first page for each section
+if (siteSettings.docsSections) {
+	for (const section of siteSettings.docsSections) {
+		// Get docs for this section
+		const sectionDocs = filteredDocs.filter(doc => doc.data.section === section.id);
+		
+		// Sort by sidebar order if available
+		const sortedDocs = [...sectionDocs].sort((a, b) => {
+			// If both have order, sort by order
+			if (a.data.sidebar?.order !== undefined && b.data.sidebar?.order !== undefined) {
+				return a.data.sidebar.order - b.data.sidebar.order;
+			}
+			
+			// If only one has order, it comes first
+			if (a.data.sidebar?.order !== undefined) return -1;
+			if (b.data.sidebar?.order !== undefined) return 1;
+			
+			// If neither has order, sort by title
+			return a.data.title.localeCompare(b.data.title);
+		});
+		
+		// If there are docs in this section, store the first page's URL
+		if (sortedDocs.length > 0) {
+			firstPagesMap.set(section.id, `/${section.route}/${sortedDocs[0].id}`);
+		} else {
+			// Fallback to section base route if no docs
+			firstPagesMap.set(section.id, `/${section.route}`);
+		}
+	}
+}
+
+// Filter docs by their section property if docsSections is configured
+const sectionFilteredDocs = siteSettings.docsSections
+	? filteredDocs.filter((doc) => doc.data.section === sectionId)
+	: filteredDocs;
+
 // Group docs by their top-level directory
-const docsBySection = filteredDocs.reduce(
+const docsBySection = sectionFilteredDocs.reduce(
 	(acc, doc) => {
 		// Get the top-level directory from the doc.id
 		const [section] = doc.id.split("/");
 		if (!acc[section]) {
 			acc[section] = [];
 		}
+
+		// Determine the proper route based on the section
+		const sectionRoute = currentSection.route || docsRoute;
+
 		acc[section].push({
 			text: doc.data.sidebar?.label ? doc.data.sidebar.label : doc.data.title,
-			link: `/${docsRoute}/${doc.id}`,
+			link: `/${sectionRoute}/${doc.id}`,
 			order: doc.data.sidebar?.order,
 			badge: doc.data.sidebar?.badge,
 		});
@@ -90,19 +147,66 @@ for (const section of sections) {
 
 <nav class="space-y-8">
 	<slot name="before-links" />
+
+	{/* Section Selector */}
 	{
-		sections.map((section) => (
-			<div>
-				<h2 class="mb-2 text-lg font-semibold md:text-base">
-					{getSectionTitle(section, currLocale)}
-				</h2>
-				<ul class="space-y-2">
-					{docsBySection[section].map((doc) => (
-						<SidebarLink link={doc.link} text={doc.text} badge={doc.badge} />
-					))}
-				</ul>
+		siteSettings.docsSections && siteSettings.docsSections.length > 0 && (
+			<div class="mb-6">
+				{/* <div class="mb-3">
+					<h2 class="text-lg font-semibold md:text-base">Documentation Sections</h2>
+				</div> */}
+				<div class="bg-muted/30 mr-4 rounded-md border p-2">
+					<ul class="space-y-1" role="tablist">
+						{siteSettings.docsSections.map((section) => {
+							// Get the current URL path and determine if this section is active
+							const isActive = section.id === sectionId;
+
+							return (
+								<li>
+									<a
+										href={getLocalizedRoute(currLocale, firstPagesMap.get(section.id) || `/${section.route}`)}
+										class:list={[
+											"flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm font-medium transition-colors",
+											isActive
+												? "bg-muted text-foreground"
+												: "text-muted-foreground hover:bg-muted hover:text-foreground",
+										]}
+										role="tab"
+										aria-selected={isActive}
+										aria-controls={`${section.id}-content`}
+									>
+										{section.icon && (
+											<Icon name={section.icon} class="size-4 shrink-0" aria-hidden="true" />
+										)}
+										<span class="flex-1">{section.title}</span>
+										{section.description && <span class="sr-only">: {section.description}</span>}
+									</a>
+								</li>
+							);
+						})}
+					</ul>
+				</div>
 			</div>
-		))
+		)
 	}
+
+	{/* Section Content */}
+	<div id={`${sectionId}-content`} role="tabpanel">
+		{
+			sections.map((section) => (
+				<div class="mb-8">
+					<h2 class="mb-2 text-lg font-semibold md:text-base">
+						{getSectionTitle(section, currLocale)}
+					</h2>
+					<ul class="space-y-2">
+						{docsBySection[section].map((doc) => (
+							<SidebarLink link={doc.link} text={doc.text} badge={doc.badge} />
+						))}
+					</ul>
+				</div>
+			))
+		}
+	</div>
+
 	<slot name="after-links" />
 </nav>

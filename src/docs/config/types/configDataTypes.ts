@@ -39,6 +39,7 @@ export interface DocsSiteSettingsProps {
 	copyLinkButtons?: boolean;
 	pagination?: boolean;
 	docsRoute?: string;
+	docsSections?: DocsSectionConfig[];
 }
 
 // --------------------------------------------------------
@@ -50,6 +51,32 @@ export type DocSection = {
 	id: string;
 	title: string;
 };
+
+/**
+ * Configuration for a documentation section
+ */
+export interface DocsSectionConfig {
+	/**
+	 * Unique identifier for the section
+	 */
+	id: string;
+	/**
+	 * The route to use for this section (e.g., "docs", "api", "tutorials")
+	 */
+	route: string;
+	/**
+	 * Display title for the section
+	 */
+	title: string;
+	/**
+	 * Description of the section (optional)
+	 */
+	description?: string;
+	/**
+	 * Icon for the section (optional)
+	 */
+	icon?: string;
+}
 
 // --------------------------------------------------------
 // testimonial data types

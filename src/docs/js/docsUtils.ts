@@ -54,14 +54,19 @@ export const getSectionTitle = (id: string, locale: LocaleType): string => {
 /**
  * Get the previous and next pages for a given doc id
  */
-export const getAdjacentPages = async (currentId: string, locale: LocaleType) => {
+export const getAdjacentPages = async (currentId: string, locale: LocaleType, sectionId?: string) => {
 	// Get all non-draft docs
 	const allDocs = await getCollection("docs", ({ data }) => {
 		return data.draft !== true;
 	});
 
 	// Filter docs by locale
-	const filteredDocs = filterCollectionByLanguage(allDocs, locale);
+	let filteredDocs = filterCollectionByLanguage(allDocs, locale);
+
+	// Filter by section if sectionId is provided
+	if (sectionId) {
+		filteredDocs = filteredDocs.filter(doc => doc.data.section === sectionId);
+	}
 
 	// Get ordered section IDs and create a Map for faster lookups
 	const orderedSectionIds = getOrderedSectionIds(locale);

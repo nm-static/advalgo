@@ -32,6 +32,27 @@ export const siteSettings: DocsSiteSettingsProps = {
 	pagination: true,
 	// the base route for docs pages. Defaults to "docs"
 	docsRoute: "docs",
+	// configuration for multiple documentation sections
+	docsSections: [
+		{
+			id: "main",
+			route: "docs",
+			title: "Documentation",
+			description: "Main documentation",
+		},
+		{
+			id: "api",
+			route: "api",
+			title: "API Reference",
+			description: "API documentation",
+		},
+		{
+			id: "tutorials",
+			route: "tutorials",
+			title: "Tutorials",
+			description: "Step-by-step tutorials",
+		},
+	],
 };
 
 export default siteSettings;

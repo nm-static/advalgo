@@ -1,13 +1,23 @@
-import { file, glob } from "astro/loaders";
-import { defineCollection, reference, z } from "astro:content";
+import { glob } from "astro/loaders";
+import { defineCollection, z } from "astro:content";
 
 // docs
+// Import siteSettings to access docsSections for section validation
+import { siteSettings } from "@/docs/config/siteSettings.json";
+
+// Extract section IDs from docsSections for schema validation
+const sectionIds = siteSettings.docsSections
+	? siteSettings.docsSections.map((section) => section.id)
+	: ["main"];
+
 const docsCollection = defineCollection({
 	loader: glob({ pattern: "**/[^_]*{md,mdx}", base: "./src/docs/data/docs" }),
 	schema: () =>
 		z.object({
 			title: z.string(),
 			description: z.string().optional(),
+			// Add section field to associate docs with specific sections
+			section: z.enum(sectionIds as [string, ...string[]]).default("main"),
 			sidebar: z
 				.object({
 					label: z.string().optional(),
