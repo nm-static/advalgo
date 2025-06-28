@@ -43,7 +43,7 @@ export interface DocsSiteSettingsProps {
 
 // --------------------------------------------------------
 // documentation section types
-interface DocsSections {
+export interface DocsSection {
 	/**
 	 * Unique identifier for the section. This should match the folder name under src/data/docs/
 	 */
@@ -55,30 +55,34 @@ interface DocsSections {
 }
 
 /**
- * Configuration for a documentation section
+ * Configuration for a documentation tab
  */
-interface DocsTabs {
+export interface DocsTab {
 	/**
-	 * Unique identifier for the section
+	 * Unique identifier for the tab
 	 */
 	id: string;
 	/**
-	 * Display title for the section
+	 * Display title for the tab
 	 */
 	title: string;
 	/**
-	 * Description of the section (optional)
+	 * Description of the tab (optional)
 	 */
 	description?: string;
 	/**
-	 * Icon for the section (optional)
+	 * Icon for the tab (optional)
 	 */
 	icon?: string;
+	/**
+	 * Ordered list of sidebar sections for this tab
+	 * The order determines the display order in navigation
+	 */
+	sections: DocsSection[];
 }
 
 export interface DocsSidebarNavData {
-	sections: DocsSections[];
-	tabs: DocsTabs[];
+	tabs: DocsTab[];
 }
 
 // --------------------------------------------------------

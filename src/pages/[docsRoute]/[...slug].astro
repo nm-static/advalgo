@@ -17,8 +17,8 @@ import ExternalLink from "@/docs/components/markdown-overrides/ExternalLink.astr
 import { defaultLocale, siteSettings } from "@/docs/config/siteSettings.json";
 import { docsRoute } from "@/docs/js/docsUtils";
 import { filterCollectionByLanguage } from "@/docs/js/localeUtils";
-import DocsLayout from "@/docs/layouts/DocsLayout.astro";
 import { getTranslatedData } from "@/docs/js/translationUtils";
+import DocsLayout from "@/docs/layouts/DocsLayout.astro";
 
 export async function getStaticPaths() {
 	const docs = await getCollection("docs", ({ data }) => {

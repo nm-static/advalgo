@@ -5,25 +5,6 @@ import type { DocsSidebarNavData } from "../types/configDataTypes";
  */
 const sidebarNavData: DocsSidebarNavData = {
 	/**
-	 * Ordered list of sidebar sections within each documentation tab
-	 * The order here determines the display order in navigation
-	 */
-	sections: [
-		{
-			id: "getting-started",
-			title: "Commencer",
-		},
-		{
-			id: "components",
-			title: "Composants",
-		},
-		{
-			id: "reference",
-			title: "Référence",
-		},
-	],
-
-	/**
 	 * Documentation tabs configuration
 	 * These define the different top-level documentation section tabs
 	 */
@@ -33,18 +14,52 @@ const sidebarNavData: DocsSidebarNavData = {
 			title: "Documentation",
 			description: "Documentation principale",
 			icon: "tabler/file-text",
+			// Ordered list of sidebar sections for the 'main' tab
+			// The "id" of each section should match a folder in the docs content collection
+			sections: [
+				{
+					id: "getting-started",
+					title: "Commencer",
+				},
+				{
+					id: "components",
+					title: "Composants",
+				},
+				{
+					id: "reference",
+					title: "Référence",
+				},
+			],
 		},
 		{
 			id: "api",
 			title: "Référence API",
 			description: "Documentation de l'API",
 			icon: "tabler/api-app",
+			// Ordered list of sidebar sections for the 'api' tab
+			sections: [
+				{
+					id: "getting-started",
+					title: "Commencer",
+				},
+				{
+					id: "reference",
+					title: "Référence",
+				},
+			],
 		},
 		{
 			id: "tutorials",
 			title: "Tutoriels",
 			description: "Tutoriels étape par étape",
 			icon: "tabler/school",
+			// Ordered list of sidebar sections for the 'tutorials' tab
+			sections: [
+				{
+					id: "getting-started",
+					title: "Commencer",
+				},
+			],
 		},
 	],
 };

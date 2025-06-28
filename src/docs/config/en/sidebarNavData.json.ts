@@ -5,26 +5,6 @@ import type { DocsSidebarNavData } from "../types/configDataTypes";
  */
 const sidebarNavData: DocsSidebarNavData = {
 	/**
-	 * Ordered list of sidebar sections within each documentation tab
-	 * The order here determines the display order in navigation.
-	 * If a section does not exist for a given tab, it will be hidden.
-	 */
-	sections: [
-		{
-			id: "getting-started",
-			title: "Getting Started",
-		},
-		{
-			id: "components",
-			title: "Components",
-		},
-		{
-			id: "reference",
-			title: "Reference",
-		},
-	],
-
-	/**
 	 * Documentation tabs configuration
 	 * These define the different top-level documentation section tabs
 	 */
@@ -34,18 +14,52 @@ const sidebarNavData: DocsSidebarNavData = {
 			title: "Documentation",
 			description: "Main documentation",
 			icon: "tabler/file-text",
+			// Ordered list of sidebar sections for the 'main' tab
+			// The "id" of each section should match a folder in the docs content collection
+			sections: [
+				{
+					id: "getting-started",
+					title: "Getting Started",
+				},
+				{
+					id: "components",
+					title: "Components",
+				},
+				{
+					id: "reference",
+					title: "Reference",
+				},
+			],
 		},
 		{
 			id: "api",
 			title: "API Reference",
 			description: "API documentation",
 			icon: "tabler/api-app",
+			// Ordered list of sidebar sections for the 'api' tab
+			sections: [
+				{
+					id: "getting-started",
+					title: "Getting Started",
+				},
+				{
+					id: "reference",
+					title: "Reference",
+				},
+			],
 		},
 		{
 			id: "tutorials",
 			title: "Tutorials",
 			description: "Step-by-step tutorials",
 			icon: "tabler/school",
+			// Ordered list of sidebar sections for the 'tutorials' tab
+			sections: [
+				{
+					id: "getting-started",
+					title: "Getting Started",
+				},
+			],
 		},
 	],
 };

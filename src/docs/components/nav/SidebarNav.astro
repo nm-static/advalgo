@@ -6,7 +6,13 @@ import { getCollection } from "astro:content";
 import { Icon } from "astro-icon/components";
 
 import { siteSettings } from "@/docs/config/siteSettings.json";
-import { docsRoute, getOrderedSectionIds, getSectionTitle } from "@/docs/js/docsUtils";
+import {
+	docsRoute,
+	getOrderedSectionIds,
+	getSectionTitle,
+	getTabById,
+	getTabSections,
+} from "@/docs/js/docsUtils";
 import { filterCollectionByLanguage } from "@/docs/js/localeUtils";
 import { getLocaleFromUrl } from "@/docs/js/localeUtils";
 import { getLocalizedRoute, getTranslatedData } from "@/docs/js/translationUtils";
@@ -23,7 +29,10 @@ const sidebarData = getTranslatedData("sidebarNavData", currLocale);
 
 // Get localized documentation tabs based on current locale
 const sidebarTabs = sidebarData.tabs;
-const sidebarSections = sidebarData.sections;
+// Get the current tab configuration
+const currentTab = getTabById(sectionId, currLocale);
+// Get sections for the current tab
+const currentTabSections = currentTab?.sections || [];
 
 // Get all non-draft docs
 const allDocs = await getCollection("docs", ({ data }) => {
@@ -37,9 +46,7 @@ const firstPagesMap = new Map();
 const filteredDocs = filterCollectionByLanguage(allDocs, currLocale);
 
 // Filter docs by their section property if documentation tabs are configured
-const sectionFilteredDocs = sidebarSections
-	? filteredDocs.filter((doc) => doc.data.section === sectionId)
-	: filteredDocs;
+const sectionFilteredDocs = filteredDocs.filter((doc) => doc.data.section === sectionId);
 
 // Find the first page for each section
 if (sidebarTabs) {
@@ -103,8 +110,8 @@ const docsBySection = sectionFilteredDocs.reduce(
 	>,
 );
 
-// Get ordered section IDs and create a Map for faster lookups
-const orderedSectionIds = getOrderedSectionIds(currLocale);
+// Get ordered section IDs from the current tab sections and create a Map for faster lookups
+const orderedSectionIds = currentTabSections.map((section) => section.id);
 const sectionIndexMap = new Map(orderedSectionIds.map((id, index) => [id, index]));
 
 // Sort sections according to the config order
@@ -114,7 +121,10 @@ const sections = Object.keys(docsBySection).sort((a, b) => {
 
 	// If neither section is in the config, sort by translated titles
 	if (aIndex === -1 && bIndex === -1) {
-		return getSectionTitle(a, currLocale).localeCompare(getSectionTitle(b, currLocale), currLocale);
+		return getSectionTitle(a, sectionId, currLocale).localeCompare(
+			getSectionTitle(b, sectionId, currLocale),
+			currLocale,
+		);
 	}
 
 	// Prioritize configured sections over unconfigured ones
@@ -193,7 +203,7 @@ for (const section of sections) {
 			sections.map((section) => (
 				<div class="mb-8">
 					<h2 class="mb-2 text-lg font-semibold md:text-base">
-						{getSectionTitle(section, currLocale)}
+						{getSectionTitle(section, sectionId, currLocale)}
 					</h2>
 					<ul class="space-y-2">
 						{docsBySection[section].map((doc) => (
