@@ -233,11 +233,8 @@ for (const section of sections) {
 	{
 		sidebarTabs && sidebarTabs.length > 1 && (
 			<div class="mb-6">
-				{/* <div class="mb-3">
-					<h2 class="text-lg font-semibold md:text-base">Documentation Sections</h2>
-				</div> */}
-				<div class="bg-muted/30 mr-4 rounded-md border p-2">
-					<ul class="space-y-1" role="tablist">
+				<nav aria-label="Documentation Sections" class="bg-muted/30 mr-4 rounded-md border p-2">
+					<ul class="space-y-1">
 						{sidebarTabs.map((section) => {
 							// Get the current URL path and determine if this section is active
 							const isActive = section.id === sectionId;
@@ -252,9 +249,7 @@ for (const section of sections) {
 												? "bg-muted text-foreground"
 												: "text-muted-foreground hover:bg-muted hover:text-foreground",
 										]}
-										role="tab"
-										aria-selected={isActive}
-										aria-controls={`${section.id}-content`}
+										aria-current={isActive ? "page" : undefined}
 									>
 										{section.icon && (
 											<Icon name={section.icon} class="size-4 shrink-0" aria-hidden="true" />
@@ -266,7 +261,7 @@ for (const section of sections) {
 							);
 						})}
 					</ul>
-				</div>
+				</nav>
 			</div>
 		)
 	}
