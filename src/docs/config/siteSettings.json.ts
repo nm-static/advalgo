@@ -36,19 +36,16 @@ export const siteSettings: DocsSiteSettingsProps = {
 	docsSections: [
 		{
 			id: "main",
-			route: "docs",
 			title: "Documentation",
 			description: "Main documentation",
 		},
 		{
 			id: "api",
-			route: "api",
 			title: "API Reference",
 			description: "API documentation",
 		},
 		{
 			id: "tutorials",
-			route: "tutorials",
 			title: "Tutorials",
 			description: "Step-by-step tutorials",
 		},

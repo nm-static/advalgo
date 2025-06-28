@@ -61,10 +61,6 @@ export interface DocsSectionConfig {
 	 */
 	id: string;
 	/**
-	 * The route to use for this section (e.g., "docs", "api", "tutorials")
-	 */
-	route: string;
-	/**
 	 * Display title for the section
 	 */
 	title: string;

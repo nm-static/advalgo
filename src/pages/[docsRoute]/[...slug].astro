@@ -40,7 +40,7 @@ export async function getStaticPaths() {
 			// Generate paths for this section
 			const sectionPaths = sectionDocs.map((doc) => {
 				return {
-					params: { docsRoute: section.route, slug: doc.id as string },
+					params: { docsRoute, slug: doc.id as string },
 					props: { doc, sectionId: section.id },
 				};
 			});
