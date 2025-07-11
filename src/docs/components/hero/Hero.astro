@@ -69,7 +69,7 @@ const t = useTranslations(currLocale);
 </div>
 
 <script>
-	import anime from "animejs";
+	import { animate, stagger } from "motion";
 
 	const words = ["unique", "powerful", "premium"];
 	const wordElement = document.getElementById("animated-word");
@@ -108,29 +108,35 @@ const t = useTranslations(currLocale);
 	}
 
 	function animateText() {
-		// First fade out all letters of current word
-		anime({
-			targets: "#animated-word .letter",
-			opacity: 0,
-			duration: 300,
-			easing: "easeInOutQuad",
-			complete: () => {
-				// Change text
-				if (wordElement) {
-					currentIndex = (currentIndex + 1) % words.length;
-					const newWord = words[currentIndex];
-					wordElement.innerHTML = createLetterSpans(newWord);
+		if (!wordElement) return;
 
-					// Animate each letter in sequence
-					anime({
-						targets: "#animated-word .letter",
-						opacity: [0, 1],
-						duration: 200,
-						delay: anime.stagger(50),
-						easing: "easeInOutQuad",
-					});
-				}
+		// Get current index and prepare for next word
+		const nextIndex = (currentIndex + 1) % words.length;
+		const nextWord = words[nextIndex];
+
+		// First fade out all letters of current word
+		animate(
+			"#animated-word .letter",
+			{ opacity: 0 },
+			{
+				duration: 0.3,
+				ease: "easeInOut",
 			},
+		).finished.then(() => {
+			// Change text after fade out completes
+			currentIndex = nextIndex;
+			wordElement.innerHTML = createLetterSpans(nextWord);
+
+			// Animate new letters in with a staggered fade
+			animate(
+				"#animated-word .letter",
+				{ opacity: [0, 1] },
+				{
+					duration: 0.2,
+					delay: stagger(0.05),
+					ease: "easeInOut",
+				},
+			);
 		});
 	}
 
@@ -138,14 +144,17 @@ const t = useTranslations(currLocale);
 	if (wordElement) {
 		wordElement.innerHTML = createLetterSpans(words[0]);
 		updateContainerWidth();
-		// Initial animation
-		anime({
-			targets: "#animated-word .letter",
-			opacity: [0, 1],
-			duration: 200,
-			delay: anime.stagger(50),
-			easing: "easeInOutQuad",
-		});
+
+		// Initial animation with Motion
+		animate(
+			"#animated-word .letter",
+			{ opacity: [0, 1] },
+			{
+				duration: 0.2,
+				delay: stagger(0.05),
+				ease: "easeInOut",
+			},
+		);
 	}
 
 	// Update width on window resize

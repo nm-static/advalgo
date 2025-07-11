@@ -61,35 +61,30 @@ const { class: className } = Astro.props as Props;
 </style>
 
 <script>
-	import anime from "animejs";
+	import { animate } from "motion";
 
-	document.querySelectorAll(".gradient-border").forEach((element: HTMLElement) => {
-		// Create a simple animation that just tracks progress
-		const animation = anime({
-			targets: {},
-			duration: 10000,
-			loop: true,
-			easing: "linear",
-			autoplay: false,
-			update: function (anim) {
-				// Calculate rotation based on progress (0-100%)
-				const progress = anim.progress;
-				const startAngle = -25;
-				const endAngle = 335;
-				const range = endAngle - startAngle;
-				const currentAngle = startAngle + (progress / 100) * range;
-
-				// Update the CSS variable
-				element.style.setProperty("--rotation", `${currentAngle}deg`);
+	document.querySelectorAll(".gradient-border").forEach((element) => {
+		const animation = animate(
+			element,
+			{
+				// @ts-ignore - Motion animate CSS variables type issue
+				"--rotation": ["-25deg", "335deg"],
 			},
-		});
+			{
+				duration: 10,
+				repeat: Infinity,
+				easing: "linear",
+			},
+		);
+
+		animation.pause();
 
 		element.addEventListener("mouseenter", () => {
-			animation.play();
+			animation?.play();
 		});
 
 		element.addEventListener("mouseleave", () => {
-			animation.pause();
+			animation?.pause();
 		});
 	});
 </script>
