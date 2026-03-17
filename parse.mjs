@@ -29,11 +29,13 @@ function flag(name, fallback) {
 }
 const dryRun = args.includes("--dry-run");
 
-const DEFAULT_VAULT = "/Users/neeldhara/repos/nm-obsidian/teaching/perpetual/iitgn-elective-advanced-algorithms/public";
-const EDITIONS_VAULT = "/Users/neeldhara/repos/nm-obsidian/teaching/courses";
-const PROBLEMS_VAULT = "/Users/neeldhara/repos/nm-obsidian/teaching/problems";
+// Path configuration - can be overridden via environment variables for cloud execution
+const OBSIDIAN_BASE = process.env.OBSIDIAN_BASE || "/Users/neeldhara/repos/nm-obsidian/teaching";
+const DEFAULT_VAULT = process.env.VAULT_PATH || `${OBSIDIAN_BASE}/perpetual/iitgn-elective-advanced-algorithms/public`;
+const EDITIONS_VAULT = process.env.EDITIONS_VAULT || `${OBSIDIAN_BASE}/courses`;
+const PROBLEMS_VAULT = process.env.PROBLEMS_VAULT || `${OBSIDIAN_BASE}/problems`;
 const VAULT = flag("vault", DEFAULT_VAULT);
-const OUT = path.resolve(__dirname, flag("out", "./src/docs/data/docs/en"));
+const OUT = path.resolve(__dirname, flag("out", process.env.OUTPUT_PATH || "./src/docs/data/docs/en"));
 const EDITIONS_OUT = path.resolve(OUT, "editions");
 const PROBLEMS_OUT = path.resolve(OUT, "problems");
 const INTERACTIVES_OUT = path.resolve(__dirname, "./src/docs/components/interactives/interactives.json");

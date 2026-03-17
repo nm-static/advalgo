@@ -7,6 +7,18 @@
   publish = "dist"
   functions = "netlify/functions/"
 
+# Enable branch deploys for staging workflow
+# staging branch gets its own preview URL: staging--advalgo.netlify.app
+[context.branch-deploy]
+  command = "npm run build"
+
+[context.staging]
+  command = "npm run build"
+  # Staging-specific settings (same as production for now)
+
+[context.deploy-preview]
+  command = "npm run build"
+
 # [[redirects]]
 #   from = "/api/*" # simplify all calls to serverless functions
 #   to = "/.netlify/functions/:splat" # all function calls will go to this path
