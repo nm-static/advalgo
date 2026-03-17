@@ -2,6 +2,7 @@
 import type { CollectionEntry } from "astro:content";
 
 import SidebarCta from "@/docs/components/cta/SidebarCta.astro";
+import InteractiveEmbed from "@/docs/components/interactives/InteractiveEmbed.astro";
 import DocsPagination from "@/docs/components/nav/DocsPagination.astro";
 import SidebarNav from "@/docs/components/nav/SidebarNav.astro";
 import TableOfContents from "@/docs/components/table-of-contents/TableOfContents.astro";
@@ -21,7 +22,7 @@ interface Props {
 }
 
 const { doc, headings = [], sectionId = "main" } = Astro.props;
-const { title, description = "", sidebar, tableOfContents, pagefind = true } = doc.data;
+const { title, description = "", sidebar, tableOfContents, pagefind = true, hideTitle = false } = doc.data;
 
 const minHeadingLevel = tableOfContents?.minHeadingLevel ?? 2;
 const maxHeadingLevel = tableOfContents?.maxHeadingLevel ?? 3;
@@ -51,7 +52,7 @@ const { prev, next } = await getAdjacentPages(doc.id, currLocale, sectionId);
     </aside>
 
     {/* Main Content */}
-    <main class="w-full min-w-0">
+    <main class="w-full min-w-0 overflow-visible">
       {/* Mobile Table of Contents Dropdown */}
       <div class="sticky top-[calc(var(--nav-height)-1px)] z-40 -mx-4 mb-4 md:-ml-0 lg:hidden">
         <details class="mobile-toc bg-background/90 relative border-b px-4 py-2 backdrop-blur">
@@ -71,12 +72,17 @@ const { prev, next } = await getAdjacentPages(doc.id, currLocale, sectionId);
       {/* Content */}
       <div
         id="main-content"
-        class="mr-auto w-full max-w-2xl scroll-mt-[calc(var(--nav-height)+1rem)] overflow-x-hidden pb-(--main-content-pt) md:pl-6 lg:mt-(--main-content-pt) lg:px-1 xl:mx-auto"
+        class:list={[
+          "mr-auto w-full scroll-mt-[calc(var(--nav-height)+1rem)] pb-(--main-content-pt) md:pl-6 lg:mt-(--main-content-pt) lg:px-1 xl:mx-auto",
+          sectionId === "main" ? "max-w-2xl has-sidenotes" : "max-w-3xl"
+        ]}
         data-pagefind-body={pagefind ? true : undefined}
       >
-        <div class="flex">
-          <h1 class="docs-h1 docs-text-gradient mb-8 pb-1">{title}</h1>
-        </div>
+        {!hideTitle && (
+          <div class="flex">
+            <h1 class="docs-h1 docs-text-gradient font-heading mb-8 pb-1">{title}</h1>
+          </div>
+        )}
         <div class="docs-markdown-content">
           <slot />
         </div>
@@ -84,10 +90,16 @@ const { prev, next } = await getAdjacentPages(doc.id, currLocale, sectionId);
         {/* Previous/Next Navigation */}
         {siteSettings.pagination !== false && <DocsPagination prev={prev} next={next} />}
       </div>
+
+      {/* Interactive embeds hydration */}
+      <InteractiveEmbed />
     </main>
 
-    {/* Desktop Table of Contents */}
-    <aside class="hidden text-sm lg:block">
+    {/* Desktop Table of Contents - hidden on main section (has sidenotes), shown on others */}
+    <aside class:list={[
+      "text-sm",
+      sectionId === "main" ? "hidden" : "hidden lg:block"
+    ]}>
       <div class="sticky top-(--nav-height)">
         <div
           class="max-h-[calc(100vh-var(--nav-height))] overflow-y-auto pt-(--main-content-pt) pb-4"
@@ -137,3 +149,139 @@ const { prev, next } = await getAdjacentPages(doc.id, currLocale, sectionId);
     transform: rotateZ(90deg);
   }
 </style>
+
+<script>
+  // Interactive problem answer checking
+  function initProblemInteractivity() {
+    const forms = document.querySelectorAll('.problem-options');
+
+    forms.forEach(form => {
+      const questionId = form.dataset.questionId;
+      const correctAnswer = form.dataset.correct;
+      const questionType = form.dataset.type;
+      const checkBtn = form.querySelector('.check-answer-btn');
+      const feedback = form.querySelector('.answer-feedback');
+      const options = form.querySelectorAll('.option-label');
+
+      if (!checkBtn || !correctAnswer) return;
+
+      // Handle option selection styling
+      form.querySelectorAll('input').forEach(input => {
+        input.addEventListener('change', () => {
+          if (questionType === 'mcq') {
+            options.forEach(opt => opt.classList.remove('selected'));
+          }
+          const label = input.closest('.option-label');
+          if (input.checked) {
+            label.classList.add('selected');
+          } else {
+            label.classList.remove('selected');
+          }
+        });
+      });
+
+      checkBtn.addEventListener('click', () => {
+        const selectedInputs = form.querySelectorAll('input:checked');
+        const selectedValues = Array.from(selectedInputs).map(i => i.value).sort().join(',');
+        const correctSet = new Set(correctAnswer.split(',').map(s => s.trim()));
+        const selectedSet = new Set(selectedValues.split(',').filter(s => s));
+
+        // Clear previous styling
+        options.forEach(opt => {
+          opt.classList.remove('correct', 'incorrect');
+        });
+
+        // Check answer
+        const isCorrect = selectedValues === correctAnswer.split(',').sort().join(',');
+
+        // Style options
+        options.forEach(opt => {
+          const label = opt.dataset.label;
+          const input = opt.querySelector('input');
+          if (correctSet.has(label)) {
+            opt.classList.add('correct');
+          } else if (input && input.checked) {
+            opt.classList.add('incorrect');
+          }
+          // Show per-option feedback
+          const optFeedback = opt.querySelector('.option-feedback');
+          if (optFeedback && input && input.checked) {
+            optFeedback.classList.remove('hidden');
+          }
+        });
+
+        // Show overall feedback
+        if (isCorrect) {
+          feedback.textContent = '✓ Correct!';
+          feedback.className = 'answer-feedback correct';
+        } else {
+          feedback.textContent = '✗ Try again';
+          feedback.className = 'answer-feedback incorrect';
+        }
+
+        // Show solution if exists
+        const solution = document.querySelector(`.solution[data-for="${questionId}"]`);
+        if (solution && isCorrect) {
+          solution.classList.remove('hidden');
+        }
+      });
+    });
+  }
+
+  // Initialize on page load and after Astro navigation
+  document.addEventListener('DOMContentLoaded', initProblemInteractivity);
+  document.addEventListener('astro:page-load', initProblemInteractivity);
+
+  // Footnote Modal functionality
+  function initFootnoteModals() {
+    const triggers = document.querySelectorAll('.footnote-modal-trigger');
+    const modals = document.querySelectorAll('.footnote-modal');
+
+    // Open modal on trigger click
+    triggers.forEach(trigger => {
+      trigger.addEventListener('click', (e) => {
+        e.preventDefault();
+        const modalId = trigger.dataset.modalId;
+        const modal = document.getElementById(`modal-${modalId}`);
+        if (modal) {
+          modal.classList.add('open');
+          document.body.style.overflow = 'hidden';
+          // Focus the close button for accessibility
+          const closeBtn = modal.querySelector('.footnote-modal-close');
+          if (closeBtn) closeBtn.focus();
+        }
+      });
+    });
+
+    // Close modal handlers
+    modals.forEach(modal => {
+      // Close button
+      const closeBtn = modal.querySelector('.footnote-modal-close');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => closeModal(modal));
+      }
+
+      // Click outside to close
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeModal(modal);
+        }
+      });
+
+      // Escape key to close
+      modal.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeModal(modal);
+        }
+      });
+    });
+
+    function closeModal(modal) {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', initFootnoteModals);
+  document.addEventListener('astro:page-load', initFootnoteModals);
+</script>

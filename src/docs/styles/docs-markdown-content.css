@@ -238,4 +238,100 @@
   .docs-markdown-content summary:not(:where(.not-content, .not-content *)) p:only-child {
     display: inline;
   }
+
+  /* Callout styles - shared base styles */
+  .docs-markdown-content .callout:not(:where(.not-content, .not-content *)) {
+    @apply my-4 rounded-lg border-l-4 p-4;
+  }
+
+  /* Callout color variants */
+  .docs-markdown-content .callout-note:not(:where(.not-content, .not-content *)) {
+    @apply border-l-blue-500 bg-blue-500/10;
+  }
+  .docs-markdown-content .callout-note > .callout-title {
+    @apply text-blue-600 dark:text-blue-400;
+  }
+
+  .docs-markdown-content .callout-tip:not(:where(.not-content, .not-content *)) {
+    @apply border-l-green-500 bg-green-500/10;
+  }
+  .docs-markdown-content .callout-tip > .callout-title {
+    @apply text-green-600 dark:text-green-400;
+  }
+
+  .docs-markdown-content .callout-caution:not(:where(.not-content, .not-content *)) {
+    @apply border-l-amber-500 bg-amber-500/10;
+  }
+  .docs-markdown-content .callout-caution > .callout-title {
+    @apply text-amber-600 dark:text-amber-400;
+  }
+
+  .docs-markdown-content .callout-danger:not(:where(.not-content, .not-content *)) {
+    @apply border-l-red-500 bg-red-500/10;
+  }
+  .docs-markdown-content .callout-danger > .callout-title {
+    @apply text-red-600 dark:text-red-400;
+  }
+
+  /* Non-collapsible callout title (div) */
+  .docs-markdown-content div.callout > div.callout-title {
+    @apply mb-2 font-semibold;
+  }
+
+  /* Collapsible callout title (summary) */
+  .docs-markdown-content details.callout > summary.callout-title {
+    @apply cursor-pointer font-semibold list-none;
+  }
+
+  .docs-markdown-content details.callout > summary.callout-title::before {
+    content: "▶ ";
+    display: inline-block;
+    margin-right: 0.25rem;
+    transition: transform 0.2s ease;
+  }
+
+  .docs-markdown-content details.callout[open] > summary.callout-title::before {
+    transform: rotate(90deg);
+  }
+
+  .docs-markdown-content details.callout > summary.callout-title::-webkit-details-marker {
+    display: none;
+  }
+
+  .docs-markdown-content details.callout[open] > .callout-body {
+    @apply mt-3;
+  }
+
+  /* Callout body styles */
+  .docs-markdown-content .callout-body:not(:where(.not-content, .not-content *)) {
+    @apply text-sm;
+  }
+
+  .docs-markdown-content .callout-body p:not(:where(.not-content, .not-content *)) {
+    @apply my-2 first:mt-0 last:mb-0;
+  }
+
+  /* MathJax styling - override the image/svg rules that break math */
+  .docs-markdown-content mjx-container,
+  .docs-markdown-content mjx-container svg {
+    display: inline !important;
+    width: auto !important;
+    height: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  /* Display math (block level) */
+  .docs-markdown-content mjx-container[display="true"] {
+    display: block !important;
+    text-align: center;
+    margin: 1rem 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Ensure math paragraphs don't cause scrollbars */
+  .docs-markdown-content p:has(mjx-container[display="true"]) {
+    overflow: visible !important;
+  }
 }

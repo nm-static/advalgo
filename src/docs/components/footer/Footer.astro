@@ -19,15 +19,11 @@ interface FooterLinkItem {
 }
 
 const docLinks: FooterLinkItem[] = [
-  { label: "Getting Started", href: `/${docsRoute}/getting-started`, newTab: false },
-  { label: "Components", href: `/${docsRoute}/components`, newTab: false },
-  { label: "Get Pathfinder", href: "https://cosmicthemes.com/themes/pathfinder", newTab: true },
+  { label: "Lecture Notes", href: `/${docsRoute}/01-greedy`, newTab: false },
+  { label: "Current Edition", href: `/${docsRoute}/editions/2026-01-CS614`, newTab: false },
 ];
 
-const communityLinks: FooterLinkItem[] = [
-  { label: "GitHub", href: "https://github.com/Boston343", newTab: true },
-  { label: "Support", href: "https://cosmicthemes.com/support/", newTab: true },
-];
+const communityLinks: FooterLinkItem[] = [];
 ---
 
 <footer class="bg-background text-foreground border-t">
@@ -46,23 +42,12 @@ const communityLinks: FooterLinkItem[] = [
         </div>
       </div>
 
-      <!-- Documentation Links -->
-      <div class="grid gap-8 sm:min-w-1/3 sm:grid-cols-2 md:order-2">
+      <!-- Quick Links -->
+      <div class="md:order-2">
         <div class="flex flex-col gap-2">
-          <h3 class="font-semibold">Documentation</h3>
+          <h3 class="font-semibold">Course</h3>
           {
             docLinks.map((link) => (
-              <FooterLink href={link.href} newTab={link.newTab}>
-                {link.label}
-              </FooterLink>
-            ))
-          }
-        </div>
-
-        <div class="flex flex-col gap-2">
-          <h3 class="font-semibold">Community</h3>
-          {
-            communityLinks.map((link) => (
               <FooterLink href={link.href} newTab={link.newTab}>
                 {link.label}
               </FooterLink>

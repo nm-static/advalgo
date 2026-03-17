@@ -52,6 +52,7 @@ const docsCollection = defineCollection({
         })
         .optional(),
       pagefind: z.boolean().optional(),
+      hideTitle: z.boolean().optional(),
       mappingKey: z.string().optional(),
       draft: z.boolean().optional(),
     }),

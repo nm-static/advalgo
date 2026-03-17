@@ -4,60 +4,84 @@ import type { DocsSidebarNavData } from "../types/configDataTypes";
  * Combined sidebar navigation data for the English locale
  */
 const sidebarNavData: DocsSidebarNavData = {
-  /**
-   * Documentation tabs configuration
-   * These define the different top-level documentation section tabs
-   */
   tabs: [
     {
       id: "main",
-      title: "Documentation",
-      description: "Main documentation",
+      title: "Lecture Notes",
+      description: "Lecture notes and course materials",
       icon: "tabler/file-text",
-      // Ordered list of sidebar sections for the 'main' tab
-      // The "id" of each section should match a folder in the docs content collection
       sections: [
         {
-          id: "getting-started",
-          title: "Getting Started",
+          id: "01-greedy",
+          title: "1. Greedy",
         },
         {
-          id: "components",
-          title: "Components",
+          id: "02-dp",
+          title: "2. Dynamic Programming",
         },
         {
-          id: "reference",
-          title: "Reference",
+          id: "03-maxflow",
+          title: "3. Flows and Cuts",
+        },
+        {
+          id: "04-hardness",
+          title: "4. Hardness",
+        },
+        {
+          id: "05-randomized",
+          title: "5. Randomized Algorithms",
+        },
+        {
+          id: "06-fpt",
+          title: "6. Fixed-Parameter Tractability",
+        },
+        {
+          id: "07-approx",
+          title: "7. Approximation Algorithms",
+        },
+        {
+          id: "08-hardness",
+          title: "8. Hardness of Approximation",
+        },
+        {
+          id: "09-approx-random",
+          title: "9. Approximation and Randomization",
+        },
+        {
+          id: "10-random-fpt",
+          title: "10. Randomized FPT",
+        },
+        {
+          id: "11-param-approx",
+          title: "11. Parameterized Approximation",
+        },
+        {
+          id: "12-heuristics",
+          title: "12. Heuristics",
         },
       ],
     },
     {
-      id: "api",
-      title: "API Reference",
-      description: "API documentation",
+      id: "editions",
+      title: "Editions",
+      description: "Past and current editions of the course",
       icon: "tabler/api-app",
-      // Ordered list of sidebar sections for the 'api' tab
       sections: [
         {
-          id: "endpoints",
-          title: "Endpoints",
-        },
-        {
-          id: "authentication",
-          title: "Authentication",
+          id: "editions",
+          title: "Editions",
         },
       ],
     },
     {
-      id: "tutorials",
-      title: "Tutorials",
-      description: "Step-by-step tutorials",
+      id: "problems",
+      title: "Problems",
+      description: "Problem sets and exercises",
       icon: "tabler/school",
-      // Ordered list of sidebar sections for the 'tutorials' tab
       sections: [
         {
-          id: "tips-and-tricks",
-          title: "Tips and Tricks",
+          id: "problems/approximation-algorithms",
+          title: "Approximation Algorithms",
         },
       ],
     },

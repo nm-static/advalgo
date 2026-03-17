@@ -1,0 +1,222 @@
+---
+import BaseLayoutDocs from "@/docs/layouts/BaseLayoutDocs.astro";
+import { getAuthenticatedUser } from "@/lib/auth";
+import { getAllStudentData, type BatchQuizData } from "@/lib/sheets";
+
+export const prerender = false;
+
+// Check authentication
+const email = await getAuthenticatedUser(Astro.cookies);
+if (!email) {
+  return Astro.redirect("/login");
+}
+
+// Fetch all quiz data across all batches
+const batchData = await getAllStudentData(email);
+const hasData = batchData.length > 0;
+const multipleBatches = batchData.length > 1;
+---
+
+<BaseLayoutDocs title="My Scores" description="View your quiz scores">
+  <main class="min-h-[calc(100vh-var(--nav-height))] px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h1 class="text-2xl font-semibold">My Quiz Scores</h1>
+          <p class="text-muted-foreground mt-1">
+            Logged in as <span class="font-medium">{email}</span>
+          </p>
+        </div>
+        <div class="flex gap-2">
+          <button
+            id="refresh-btn"
+            class="px-4 py-2 text-sm border rounded-lg hover:bg-muted transition-colors flex items-center gap-2"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Refresh
+          </button>
+          <button
+            id="logout-btn"
+            class="px-4 py-2 text-sm border rounded-lg hover:bg-muted transition-colors"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+
+      {!hasData ? (
+        <div class="bg-card border rounded-xl p-8 text-center">
+          <p class="text-muted-foreground">
+            No quiz data found for your email address.
+          </p>
+          <p class="text-sm text-muted-foreground mt-2">
+            If you believe this is an error, please contact the instructor.
+          </p>
+        </div>
+      ) : (
+        <div class="space-y-8">
+          {batchData.map((batch: BatchQuizData, batchIndex: number) => (
+            <div data-batch={batchIndex}>
+              {/* Batch header - only show if multiple batches */}
+              {multipleBatches && (
+                <div class="mb-6">
+                  <h2 class="text-xl font-semibold flex items-center gap-3">
+                    <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
+                      {batch.batch.name}
+                    </span>
+                  </h2>
+                </div>
+              )}
+
+              {/* Quiz tabs */}
+              <div class="bg-card border rounded-xl overflow-hidden">
+                {/* Tab buttons */}
+                <div class="flex border-b overflow-x-auto">
+                  {batch.quizzes.map((quiz, index) => (
+                    <button
+                      class:list={[
+                        "quiz-tab px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors relative",
+                        "hover:bg-muted/50",
+                        index === 0 ? "tab-active" : ""
+                      ]}
+                      data-batch-index={batchIndex}
+                      data-quiz-index={index}
+                    >
+                      Quiz {quiz.quizNumber}
+                      {quiz.found && quiz.total !== null && (
+                        <span class="ml-2 text-xs px-1.5 py-0.5 bg-primary/10 text-primary rounded">
+                          {quiz.total}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Tab panels */}
+                {batch.quizzes.map((quiz, index) => (
+                  <div
+                    class:list={[
+                      "quiz-panel p-6",
+                      index === 0 ? "" : "hidden"
+                    ]}
+                    data-batch-index={batchIndex}
+                    data-quiz-index={index}
+                  >
+                    {quiz.found ? (
+                      Object.keys(quiz.answers).length > 0 ? (
+                        <div class="overflow-x-auto">
+                          <table class="w-full text-sm">
+                            <thead>
+                              <tr class="border-b">
+                                <th class="text-left py-2 px-3 font-medium text-muted-foreground">
+                                  Question
+                                </th>
+                                <th class="text-left py-2 px-3 font-medium text-muted-foreground">
+                                  Your Answer
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {Object.entries(quiz.answers).map(([question, answer]) => (
+                                <tr class="border-b last:border-0">
+                                  <td class="py-2 px-3 font-medium">{question}</td>
+                                  <td class="py-2 px-3">{answer || "—"}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      ) : (
+                        <p class="text-muted-foreground text-center py-4">
+                          No answer data available for this quiz.
+                        </p>
+                      )
+                    ) : (
+                      <p class="text-muted-foreground text-center py-4">
+                        No data found for this quiz.
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Separator between batches */}
+              {multipleBatches && batchIndex < batchData.length - 1 && (
+                <hr class="my-8 border-border" />
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      <p class="text-muted-foreground text-sm text-center mt-8">
+        If you believe there's an error in your scores, please contact the instructor.
+      </p>
+    </div>
+  </main>
+</BaseLayoutDocs>
+
+<style>
+  .quiz-tab {
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .quiz-tab.tab-active {
+    border-bottom-color: hsl(var(--primary));
+    color: hsl(var(--primary));
+    background-color: hsl(var(--muted) / 0.3);
+  }
+</style>
+
+<script>
+  const logoutBtn = document.getElementById("logout-btn") as HTMLButtonElement;
+  const refreshBtn = document.getElementById("refresh-btn") as HTMLButtonElement;
+
+  // Tab switching
+  document.querySelectorAll(".quiz-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const batchIndex = tab.getAttribute("data-batch-index");
+      const quizIndex = tab.getAttribute("data-quiz-index");
+
+      // Update active tab
+      document.querySelectorAll(`.quiz-tab[data-batch-index="${batchIndex}"]`).forEach((t) => {
+        t.classList.remove("tab-active");
+      });
+      tab.classList.add("tab-active");
+
+      // Show corresponding panel
+      document.querySelectorAll(`.quiz-panel[data-batch-index="${batchIndex}"]`).forEach((panel) => {
+        if (panel.getAttribute("data-quiz-index") === quizIndex) {
+          panel.classList.remove("hidden");
+        } else {
+          panel.classList.add("hidden");
+        }
+      });
+    });
+  });
+
+  refreshBtn.addEventListener("click", () => {
+    refreshBtn.disabled = true;
+    refreshBtn.innerHTML = `
+      <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      </svg>
+      Refreshing...
+    `;
+    window.location.reload();
+  });
+
+  logoutBtn.addEventListener("click", async () => {
+    logoutBtn.disabled = true;
+    logoutBtn.textContent = "Logging out...";
+
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      window.location.href = "/login";
+    } catch {
+      window.location.href = "/login";
+    }
+  });
+</script>

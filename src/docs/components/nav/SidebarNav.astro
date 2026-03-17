@@ -155,11 +155,16 @@ if (sidebarTabs) {
   }
 }
 
-// Group docs by their top-level directory
-const docsBySection = sectionFilteredDocs.reduce(
+// Group docs by their directory path (supports nested folders like problems/topic)
+// Only include docs that have sidebar metadata defined
+const docsBySection = sectionFilteredDocs
+  .filter((doc) => doc.data.sidebar !== undefined)
+  .reduce(
   (acc, doc) => {
-    // Get the top-level directory from the doc.id
-    const [section] = doc.id.split("/");
+    // Get the directory path from doc.id (everything except filename)
+    const parts = doc.id.split("/");
+    // Remove the last part (filename) to get the directory
+    const section = parts.length > 1 ? parts.slice(0, -1).join("/") : parts[0];
     if (!acc[section]) {
       acc[section] = [];
     }
@@ -269,20 +274,88 @@ for (const section of sections) {
   {/* Section Content */}
   <div id={`${sectionId}-content`} role="tabpanel">
     {
-      sections.map((section) => (
-        <div class="mb-8">
-          <h2 class="mb-2 text-lg font-semibold md:text-base">
-            {getSectionTitle(section, sectionId, currLocale)}
-          </h2>
-          <ul class="space-y-2">
-            {docsBySection[section].map((doc) => (
-              <SidebarLink link={doc.link} text={doc.text} badge={doc.badge} />
-            ))}
-          </ul>
-        </div>
-      ))
+      // Skip section wrapper if there's only one section matching the tab ID
+      sections.length === 1 && sections[0] === sectionId ? (
+        <ul class="space-y-2">
+          {docsBySection[sections[0]].map((doc) => (
+            <SidebarLink link={doc.link} text={doc.text} badge={doc.badge} />
+          ))}
+        </ul>
+      ) : (
+        sections.map((section) => (
+          <details class="sidebar-section mb-4 group" data-section={section}>
+            <summary class="mb-2 font-heading text-sm font-semibold cursor-pointer list-none flex items-center gap-1 select-none">
+              <span class="transition-transform duration-200 -rotate-90 group-open:rotate-0">
+                <Icon name="tabler/chevron-down" class="size-4" />
+              </span>
+              {getSectionTitle(section, sectionId, currLocale)}
+            </summary>
+            <ul class="space-y-2 ml-5">
+              {docsBySection[section].map((doc) => (
+                <SidebarLink link={doc.link} text={doc.text} badge={doc.badge} />
+              ))}
+            </ul>
+          </details>
+        ))
+      )
     }
   </div>
+
+  <script>
+    function initSidebarState() {
+      const STORAGE_KEY = 'sidebar-sections-state';
+
+      // Get saved state from localStorage
+      const getSavedState = () => {
+        try {
+          return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+        } catch {
+          return {};
+        }
+      };
+
+      // Save state to localStorage
+      const saveState = (sectionId: string, isOpen: boolean) => {
+        const state = getSavedState();
+        state[sectionId] = isOpen;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      };
+
+      // Restore state for all sections
+      const restoreState = () => {
+        const state = getSavedState();
+        const sections = document.querySelectorAll<HTMLDetailsElement>('.sidebar-section[data-section]');
+
+        sections.forEach((details) => {
+          const sectionId = details.dataset.section;
+          if (sectionId && state[sectionId] === true) {
+            details.open = true;
+          }
+        });
+      };
+
+      // Add event listeners to save state on toggle
+      const addListeners = () => {
+        const sections = document.querySelectorAll<HTMLDetailsElement>('.sidebar-section[data-section]');
+
+        sections.forEach((details) => {
+          details.addEventListener('toggle', () => {
+            const sectionId = details.dataset.section;
+            if (sectionId) {
+              saveState(sectionId, details.open);
+            }
+          });
+        });
+      };
+
+      restoreState();
+      addListeners();
+    }
+
+    // Run on initial load and after Astro page transitions
+    document.addEventListener('DOMContentLoaded', initSidebarState);
+    document.addEventListener('astro:page-load', initSidebarState);
+  </script>
 
   <slot name="after-links" />
 </nav>

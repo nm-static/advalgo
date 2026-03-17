@@ -1,0 +1,49 @@
+---
+/**
+ * Interactive component wrapper
+ *
+ * Renders an interactive component by ID, or shows a placeholder if not yet implemented.
+ */
+import { interactiveRegistry, interactiveDescriptions, isImplemented } from "./InteractiveRegistry";
+
+interface Props {
+  id: string;
+}
+
+const { id } = Astro.props;
+
+const implemented = isImplemented(id);
+const description = interactiveDescriptions[id] || "No description available.";
+
+let InteractiveComponent: any = null;
+if (implemented) {
+  const entry = interactiveRegistry[id];
+  const module = await entry.component();
+  InteractiveComponent = module.default;
+}
+---
+
+{implemented ? (
+  <div class="interactive-wrapper my-6">
+    <InteractiveComponent />
+  </div>
+) : (
+  <div class="interactive-placeholder my-6 rounded-lg border-2 border-dashed border-primary/50 bg-primary/5 p-6">
+    <div class="flex items-center gap-2 mb-3">
+      <span class="text-2xl">🎮</span>
+      <span class="font-heading font-semibold text-primary">Interactive: {id}</span>
+    </div>
+    <p class="text-sm text-muted-foreground italic">
+      {description}
+    </p>
+    <p class="text-xs text-muted-foreground mt-3">
+      (Component not yet implemented)
+    </p>
+  </div>
+)}
+
+<style>
+  .interactive-wrapper {
+    @apply rounded-lg border border-border bg-card p-4;
+  }
+</style>

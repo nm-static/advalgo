@@ -1,0 +1,630 @@
+---
+/**
+ * TapeSort Interactive
+ *
+ * An interactive visualization showing how files are optimally arranged on a tape.
+ * Users drag files from a source area onto the tape and receive feedback on their solution.
+ */
+---
+
+<template id="tape-sort-template">
+<div class="tape-sort-interactive not-content">
+  <div class="tape-area">
+    <div class="tape-label">Tape</div>
+    <div class="tape-drop-zone" data-zone="tape"></div>
+  </div>
+
+  <div class="files-area">
+    <div class="files-label">Files</div>
+    <div class="files-source" data-zone="source"></div>
+  </div>
+
+  <div class="stats-area">
+    <div class="stat">
+      <span class="stat-label">Your Cost:</span>
+      <span class="stat-value cost-value">—</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">Optimal Cost:</span>
+      <span class="stat-value target-value">—</span>
+    </div>
+  </div>
+
+  <div class="message-area">
+    <p class="message">Drag all files onto the tape to arrange them.</p>
+  </div>
+
+  <div class="controls-area">
+    <button class="btn btn-secondary btn-reset">Reset</button>
+    <button class="btn btn-primary btn-check" disabled>Check Solution</button>
+    <button class="btn btn-secondary btn-new">New Problem</button>
+  </div>
+
+  <div class="result-area hidden">
+    <div class="result-content"></div>
+  </div>
+</div>
+</template>
+
+<script>
+  function initTapeSort() {
+    const placeholder = document.querySelector('.interactive-embed[data-interactive-id="tape-sort"]');
+    if (!placeholder || placeholder.dataset.initialized) return;
+    placeholder.dataset.initialized = 'true';
+
+    const template = document.getElementById('tape-sort-template');
+    if (!template) return;
+
+    const content = template.content.cloneNode(true);
+    placeholder.innerHTML = '';
+    placeholder.appendChild(content);
+
+    const container = placeholder.querySelector('.tape-sort-interactive');
+    if (!container) return;
+
+    // Elements
+    const tapeZone = container.querySelector('[data-zone="tape"]');
+    const sourceZone = container.querySelector('[data-zone="source"]');
+    const costValue = container.querySelector('.cost-value');
+    const targetValue = container.querySelector('.target-value');
+    const messageEl = container.querySelector('.message');
+    const resultArea = container.querySelector('.result-area');
+    const resultContent = container.querySelector('.result-content');
+    const btnCheck = container.querySelector('.btn-check');
+    const btnReset = container.querySelector('.btn-reset');
+    const btnNew = container.querySelector('.btn-new');
+
+    // Colors for files
+    const colors = ['#22c55e', '#3b82f6', '#f97316', '#ec4899', '#8b5cf6', '#06b6d4'];
+
+    let files = [];
+    let draggedEl = null;
+
+    // Generate random files
+    function generateFiles() {
+      const count = 5 + Math.floor(Math.random() * 3); // 5-7 files
+      const newFiles = [];
+      for (let i = 0; i < count; i++) {
+        newFiles.push({
+          id: i,
+          length: Math.floor(Math.random() * 90) + 10, // 10-99
+          color: colors[i % colors.length]
+        });
+      }
+      return newFiles;
+    }
+
+    // Calculate total access cost
+    function calculateCost(fileArray) {
+      let totalCost = 0;
+      let runningSum = 0;
+      for (const file of fileArray) {
+        runningSum += file.length;
+        totalCost += runningSum;
+      }
+      return totalCost;
+    }
+
+    // Calculate average access cost
+    function calculateAvgCost(fileArray) {
+      if (fileArray.length === 0) return 0;
+      return calculateCost(fileArray) / fileArray.length;
+    }
+
+    // Get optimal cost (sorted by length)
+    function getOptimalCost(fileArray) {
+      const sorted = [...fileArray].sort((a, b) => a.length - b.length);
+      return calculateCost(sorted);
+    }
+
+    // Get files currently on tape (in order)
+    function getTapeFiles() {
+      const tapeFileEls = tapeZone.querySelectorAll('.file-block');
+      return Array.from(tapeFileEls).map(el => {
+        const id = parseInt(el.dataset.id);
+        return files.find(f => f.id === id);
+      });
+    }
+
+    // Get files still in source
+    function getSourceFiles() {
+      const sourceFileEls = sourceZone.querySelectorAll('.file-block');
+      return Array.from(sourceFileEls).map(el => {
+        const id = parseInt(el.dataset.id);
+        return files.find(f => f.id === id);
+      });
+    }
+
+    // Create a file block element
+    function createFileBlock(file) {
+      const el = document.createElement('div');
+      el.className = 'file-block';
+      el.draggable = true;
+      el.dataset.id = file.id;
+      el.style.backgroundColor = file.color;
+      el.style.width = `${Math.max(40, file.length)}px`;
+      el.style.textAlign = 'center';
+      el.style.lineHeight = '50px';
+      el.style.color = 'white';
+      el.style.fontWeight = '600';
+      el.style.fontSize = '0.875rem';
+      el.style.textShadow = '0 1px 2px rgba(0, 0, 0, 0.2)';
+      el.textContent = file.length;
+
+      // Drag events
+      el.addEventListener('dragstart', (e) => {
+        draggedEl = el;
+        el.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', file.id.toString());
+      });
+
+      el.addEventListener('dragend', () => {
+        el.classList.remove('dragging');
+        draggedEl = null;
+        container.querySelectorAll('.drag-over').forEach(z => z.classList.remove('drag-over'));
+        container.querySelectorAll('.insert-marker').forEach(m => m.remove());
+      });
+
+      // Double-click to move to other zone
+      el.addEventListener('dblclick', () => {
+        const currentZone = el.parentElement;
+        if (currentZone === sourceZone) {
+          tapeZone.appendChild(el);
+        } else if (currentZone === tapeZone) {
+          sourceZone.appendChild(el);
+        }
+        updateUI();
+      });
+
+      return el;
+    }
+
+    // Set up drop zone
+    function setupDropZone(zone) {
+      zone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        zone.classList.add('drag-over');
+
+        // Show insert position
+        if (zone === tapeZone && draggedEl) {
+          const afterElement = getDragAfterElement(zone, e.clientX);
+          const marker = zone.querySelector('.insert-marker') || createInsertMarker();
+
+          if (afterElement) {
+            zone.insertBefore(marker, afterElement);
+          } else {
+            zone.appendChild(marker);
+          }
+        }
+      });
+
+      zone.addEventListener('dragleave', (e) => {
+        if (!zone.contains(e.relatedTarget)) {
+          zone.classList.remove('drag-over');
+          zone.querySelectorAll('.insert-marker').forEach(m => m.remove());
+        }
+      });
+
+      zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zone.classList.remove('drag-over');
+        zone.querySelectorAll('.insert-marker').forEach(m => m.remove());
+
+        if (!draggedEl) return;
+
+        if (zone === tapeZone) {
+          const afterElement = getDragAfterElement(zone, e.clientX);
+          if (afterElement) {
+            zone.insertBefore(draggedEl, afterElement);
+          } else {
+            zone.appendChild(draggedEl);
+          }
+        } else {
+          zone.appendChild(draggedEl);
+        }
+
+        updateUI();
+      });
+    }
+
+    // Create insert position marker
+    function createInsertMarker() {
+      const marker = document.createElement('div');
+      marker.className = 'insert-marker';
+      return marker;
+    }
+
+    // Get element to insert after
+    function getDragAfterElement(zone, x) {
+      const draggableElements = [...zone.querySelectorAll('.file-block:not(.dragging)')];
+
+      return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = x - box.left - box.width / 2;
+        if (offset < 0 && offset > closest.offset) {
+          return { offset, element: child };
+        }
+        return closest;
+      }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+    // Update UI state
+    function updateUI() {
+      const tapeFiles = getTapeFiles();
+      const sourceFiles = getSourceFiles();
+      const allOnTape = sourceFiles.length === 0;
+
+      // Update cost display
+      if (tapeFiles.length > 0) {
+        const avgCost = calculateAvgCost(tapeFiles);
+        costValue.textContent = avgCost.toFixed(2);
+      } else {
+        costValue.textContent = '—';
+      }
+
+      // Update target
+      targetValue.textContent = (getOptimalCost(files) / files.length).toFixed(2);
+
+      // Update button state
+      btnCheck.disabled = !allOnTape;
+
+      // Update message
+      if (!allOnTape) {
+        messageEl.textContent = `Drag all files onto the tape. ${sourceFiles.length} remaining.`;
+        messageEl.className = 'message';
+      } else {
+        messageEl.textContent = 'All files placed! Click "Check Solution" to see how you did.';
+        messageEl.className = 'message ready';
+      }
+
+      // Hide result when moving files
+      resultArea.classList.add('hidden');
+    }
+
+    // Check solution
+    function checkSolution() {
+      const tapeFiles = getTapeFiles();
+      const userCost = calculateCost(tapeFiles);
+      const userAvgCost = calculateAvgCost(tapeFiles);
+      const optimalCost = getOptimalCost(files);
+      const optimalAvgCost = optimalCost / files.length;
+      const isOptimal = userCost === optimalCost;
+
+      resultArea.classList.remove('hidden');
+
+      if (isOptimal) {
+        resultContent.innerHTML = `
+          <div class="result success">
+            <strong>Perfect!</strong> Your arrangement achieves the optimal cost.
+            <p class="result-detail">
+              Total cost: <strong>${userCost}</strong> · Average cost: <strong>${userAvgCost.toFixed(2)}</strong><br>
+              The files are correctly sorted by increasing length.
+            </p>
+          </div>
+        `;
+      } else {
+        const diff = userCost - optimalCost;
+        const percentOver = ((diff / optimalCost) * 100).toFixed(1);
+        resultContent.innerHTML = `
+          <div class="result suboptimal">
+            <strong>Not quite optimal.</strong>
+            <p class="result-detail">
+              Your total cost: <strong>${userCost}</strong> · Average: <strong>${userAvgCost.toFixed(2)}</strong><br>
+              Optimal total cost: <strong>${optimalCost}</strong> · Average: <strong>${optimalAvgCost.toFixed(2)}</strong><br>
+              You're ${diff} (${percentOver}%) over optimal.
+            </p>
+            <p class="result-hint">Hint: Try sorting files by their length, smallest first.</p>
+          </div>
+        `;
+      }
+    }
+
+    // Reset current problem
+    function reset() {
+      sourceZone.innerHTML = '';
+      tapeZone.innerHTML = '';
+
+      // Shuffle files for variety
+      const shuffled = [...files].sort(() => Math.random() - 0.5);
+      shuffled.forEach(file => {
+        sourceZone.appendChild(createFileBlock(file));
+      });
+
+      resultArea.classList.add('hidden');
+      updateUI();
+    }
+
+    // Generate new problem
+    function newProblem() {
+      files = generateFiles();
+      reset();
+    }
+
+    // Initialize
+    setupDropZone(tapeZone);
+    setupDropZone(sourceZone);
+
+    btnCheck.addEventListener('click', checkSolution);
+    btnReset.addEventListener('click', reset);
+    btnNew.addEventListener('click', newProblem);
+
+    // Start with a new problem
+    newProblem();
+  }
+
+  document.addEventListener('DOMContentLoaded', initTapeSort);
+  document.addEventListener('astro:page-load', initTapeSort);
+</script>
+
+<style>
+  .tape-sort-interactive {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  /* Tape area */
+  .tape-area {
+    margin-bottom: 1rem;
+  }
+
+  .tape-label,
+  .files-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted-foreground, #6b7280);
+    margin-bottom: 0.5rem;
+  }
+
+  .tape-drop-zone {
+    min-height: 70px;
+    background: #94a3b8;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    gap: 4px;
+    transition: background-color 0.2s;
+  }
+
+  .tape-drop-zone.drag-over {
+    background: #7c8a9a;
+  }
+
+  .tape-drop-zone:empty::before {
+    content: 'Drop files here';
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.875rem;
+    margin: auto;
+  }
+
+  /* Files source area */
+  .files-area {
+    margin-bottom: 1rem;
+  }
+
+  .files-source {
+    min-height: 70px;
+    border: 2px dashed #d1d5db;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    gap: 8px;
+    flex-wrap: wrap;
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+
+  :global(.dark) .files-source {
+    border-color: #4b5563;
+  }
+
+  .files-source.drag-over {
+    border-color: #3b82f6;
+    background: rgba(59, 130, 246, 0.05);
+  }
+
+  .files-source:empty::before {
+    content: 'All files placed on tape!';
+    color: var(--muted-foreground, #9ca3af);
+    font-size: 0.875rem;
+    margin: auto;
+  }
+
+  /* File blocks */
+  .file-block {
+    height: 50px;
+    min-width: 40px;
+    border-radius: 4px;
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+    box-sizing: border-box;
+    text-align: center;
+    line-height: 50px;
+  }
+
+  .file-block:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .file-block.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+  }
+
+  .file-length {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Insert marker */
+  .insert-marker {
+    width: 3px;
+    height: 50px;
+    background: #3b82f6;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* Stats area */
+  .stats-area {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 8px;
+  }
+
+  :global(.dark) .stats-area {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--muted-foreground, #6b7280);
+    margin-bottom: 0.25rem;
+  }
+
+  .stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-family: ui-monospace, monospace;
+    color: var(--foreground, #111827);
+  }
+
+  :global(.dark) .stat-value {
+    color: #f3f4f6;
+  }
+
+  /* Message area */
+  .message-area {
+    text-align: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .message {
+    font-size: 0.875rem;
+    color: var(--muted-foreground, #6b7280);
+    margin: 0;
+  }
+
+  .message.ready {
+    color: #22c55e;
+    font-weight: 500;
+  }
+
+  /* Controls */
+  .controls-area {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .btn {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: none;
+  }
+
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn-primary {
+    background: #3b82f6;
+    color: white;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: #2563eb;
+  }
+
+  .btn-secondary {
+    background: #e5e7eb;
+    color: #374151;
+  }
+
+  :global(.dark) .btn-secondary {
+    background: #374151;
+    color: #e5e7eb;
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background: #d1d5db;
+  }
+
+  :global(.dark) .btn-secondary:hover:not(:disabled) {
+    background: #4b5563;
+  }
+
+  /* Result area */
+  .result-area {
+    margin-top: 1rem;
+  }
+
+  .result-area.hidden {
+    display: none;
+  }
+
+  .result {
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .result.success {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: #16a34a;
+  }
+
+  :global(.dark) .result.success {
+    color: #4ade80;
+  }
+
+  .result.suboptimal {
+    background: rgba(249, 115, 22, 0.1);
+    border: 1px solid rgba(249, 115, 22, 0.3);
+    color: #ea580c;
+  }
+
+  :global(.dark) .result.suboptimal {
+    color: #fb923c;
+  }
+
+  .result-detail {
+    font-size: 0.875rem;
+    margin: 0.5rem 0;
+    line-height: 1.6;
+  }
+
+  .result-hint {
+    font-size: 0.8rem;
+    font-style: italic;
+    margin-top: 0.75rem;
+    opacity: 0.9;
+  }
+</style>

@@ -14,14 +14,35 @@ export interface Props {
 
 const { title, description, image, noindex = false } = Astro.props as Props;
 
-import InterVariable from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2";
 ---
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width" initial-scale="1.0" />
 
-<!-- local font preload for better performance -->
-<link rel="preload" href={InterVariable} as="font" type="font/woff2" crossorigin="anonymous" />
+<!-- MathJax for math rendering -->
+<script is:inline>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    },
+    svg: {
+      fontCache: 'global'
+    },
+    startup: {
+      ready: () => {
+        MathJax.startup.defaultReady();
+        // Reprocess on Astro page navigation
+        document.addEventListener('astro:page-load', () => {
+          if (window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetPromise();
+          }
+        });
+      }
+    }
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 
 <!-- Favicons. Generated from https://realfavicongenerator.net/ -->
 <link rel="icon" type="image/png" href="/favicons/favicon-96x96.png" sizes="96x96" />
@@ -40,18 +61,9 @@ import InterVariable from "@fontsource-variable/inter/files/inter-latin-wght-nor
   function initTheme() {
     const colorTheme = localStorage.getItem("colorTheme");
     if (!colorTheme) {
-      // set dark theme initially
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("colorTheme", "dark");
-
-      // if no color theme yet, use the users preferences (uncomment the below code, and comment out the above code to use this instead)
-      // if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      // 	document.documentElement.classList.add("dark");
-      // 	localStorage.setItem("colorTheme", "dark");
-      // } else {
-      // 	document.documentElement.classList.remove("dark");
-      // 	localStorage.setItem("colorTheme", "light");
-      // }
+      // set light theme initially
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("colorTheme", "light");
     } else {
       // If there is, assign the theme based on the value in local storage
       if (colorTheme === "dark") {

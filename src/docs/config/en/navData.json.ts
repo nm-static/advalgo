@@ -7,17 +7,12 @@ import { type navItem } from "../types/configDataTypes";
 
 const navConfig: navItem[] = [
   {
-    text: "Introduction",
-    link: "/docs/getting-started/",
+    text: "Materials",
+    link: "/materials/01-greedy/",
   },
   {
-    text: "Components",
-    link: "/docs/components/",
-  },
-  {
-    text: "Get Pathfinder",
-    link: "https://cosmicthemes.com/themes/pathfinder",
-    newTab: true,
+    text: "My Scores",
+    link: "/login",
   },
 ];
 

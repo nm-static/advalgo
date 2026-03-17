@@ -1,0 +1,3 @@
+{
+  "tape-sort": "An interactive visualization showing how files are optimally arranged on a tape. Users can drag files to reorder them and see how the total access cost changes. The visualization highlights the exchange argument: swapping two adjacent out-of-order files always improves (or maintains) the total cost."
+}

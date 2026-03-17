@@ -1,53 +1,58 @@
 import type { DocsSiteData } from "../types/configDataTypes";
 
 const docsSiteData: DocsSiteData = {
-  title: "Pathfinder",
+  title: "Advanced Algorithms",
   description:
-    "A modern, fast, and feature-rich documentation theme built with Astro v5 and Tailwind CSS v4.",
+    "Course materials for Advanced Algorithms — lecture notes, problem sets, and references.",
   navSocials: [
     {
-      social: "X formerly known as Twitter",
-      link: "https://x.com/BowTiedWebReapr",
-      icon: "tabler/brand-x",
-    },
-    {
       social: "GitHub",
-      link: "https://github.com/Boston343",
+      link: "https://github.com/neeldhara",
       icon: "mdi/github",
     },
   ],
   footerSocials: [
     {
-      social: "X formerly known as Twitter",
-      link: "https://x.com/BowTiedWebReapr",
+      social: "Website",
+      link: "https://www.neeldhara.com",
+      icon: "tabler/world",
+    },
+    {
+      social: "Twitter",
+      link: "https://twitter.com/neaborat",
       icon: "tabler/brand-x",
     },
     {
-      social: "Threads",
-      link: "https://www.threads.net/@bowtiedwebreaper",
-      icon: "tabler/brand-threads",
+      social: "LinkedIn",
+      link: "https://www.linkedin.com/in/neeldhara/",
+      icon: "tabler/brand-linkedin",
     },
     {
       social: "BlueSky",
-      link: "https://bsky.app/profile/webreaper.dev",
+      link: "https://bsky.app/profile/neeldhara.com",
       icon: "tabler/brand-bluesky",
     },
     {
+      social: "Mastodon",
+      link: "https://mathstodon.xyz/@neeldhara",
+      icon: "tabler/brand-mastodon",
+    },
+    {
       social: "GitHub",
-      link: "https://github.com/Boston343",
+      link: "https://github.com/neeldhara",
       icon: "tabler/brand-github",
     },
   ],
   // default image for meta tags if the page doesn't have an image already
   defaultImage: {
     src: "/images/cosmic-themes-logo.png",
-    alt: "Cosmic Themes logo",
+    alt: "Advanced Algorithms",
   },
   // Your information for SEO purposes
   author: {
-    name: "Cosmic Themes",
-    email: "creator@cosmicthemes.com",
-    twitter: "Cosmic_Themes",
+    name: "Neeldhara Misra",
+    email: "",
+    twitter: "",
   },
 };
 

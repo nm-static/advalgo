@@ -106,7 +106,7 @@
 
 @layer components {
   .docs-h1 {
-    @apply text-3xl font-semibold md:text-4xl;
+    @apply text-2xl font-semibold leading-relaxed md:text-3xl;
   }
 
   .docs-h2 {
@@ -138,8 +138,352 @@
     @apply text-foreground;
   }
 
+  /* Collapsible sidebar sections */
+  .sidebar-section summary::-webkit-details-marker,
+  .sidebar-section summary::marker {
+    display: none;
+  }
+
+  .sidebar-section summary:hover {
+    @apply text-foreground/80;
+  }
+
   .docs-site-container {
     @apply mx-auto max-w-[1400px] px-4;
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════════════
+   * PROBLEM STYLES
+   * ══════════════════════════════════════════════════════════════════════════════
+   */
+
+  .problem-content {
+    @apply space-y-6;
+  }
+
+  .problem-body {
+    @apply max-w-none leading-relaxed;
+  }
+
+  .problem-body p {
+    @apply mb-4;
+  }
+
+  .problem-body ul,
+  .problem-body ol {
+    @apply mb-4 pl-6;
+  }
+
+  .problem-body li {
+    @apply mb-2;
+  }
+
+  .problem-body img {
+    @apply h-auto rounded-lg border my-4;
+    width: 69%;
+  }
+
+  .problem-part {
+    @apply border rounded-lg p-4 my-4 bg-muted/30;
+  }
+
+  .problem-part h4 {
+    @apply font-semibold text-lg mb-3 text-primary;
+  }
+
+  .part-body {
+    @apply mb-4;
+  }
+
+  .problem-options {
+    @apply space-y-3;
+  }
+
+  .options-list {
+    @apply space-y-2;
+  }
+
+  .option-label {
+    @apply flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all;
+    @apply hover:bg-muted/50 hover:border-primary/50;
+  }
+
+  .option-label.selected {
+    @apply bg-primary/10 border-primary;
+  }
+
+  .option-label.correct {
+    @apply bg-success/20 border-success;
+  }
+
+  .option-label.incorrect {
+    @apply bg-error/20 border-error;
+  }
+
+  .option-label input[type="radio"],
+  .option-label input[type="checkbox"] {
+    @apply mt-1 accent-primary;
+  }
+
+  .option-marker {
+    @apply w-6 h-6 rounded-full bg-muted flex items-center justify-center text-sm font-semibold shrink-0;
+  }
+
+  .option-text {
+    @apply flex-1 flex flex-col;
+  }
+
+  .option-text p {
+    @apply m-0;
+  }
+
+  .option-feedback {
+    @apply text-sm mt-2 text-muted-foreground italic block w-full;
+  }
+
+  .option-feedback.hidden {
+    @apply hidden;
+  }
+
+  .problem-actions {
+    @apply flex items-center gap-4 mt-4;
+  }
+
+  .check-answer-btn {
+    @apply px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium;
+    @apply hover:bg-primary-dark transition-colors;
+  }
+
+  .check-answer-btn:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
+  .answer-feedback {
+    @apply font-medium;
+  }
+
+  .answer-feedback.correct {
+    @apply text-success;
+  }
+
+  .answer-feedback.incorrect {
+    @apply text-error;
+  }
+
+  .problem-hints,
+  .problem-solution {
+    @apply border rounded-lg mt-4;
+  }
+
+  .problem-hints summary,
+  .problem-solution summary {
+    @apply p-3 font-medium cursor-pointer bg-muted/30 rounded-t-lg;
+    @apply hover:bg-muted/50 transition-colors;
+  }
+
+  .problem-hints[open] summary,
+  .problem-solution[open] summary {
+    @apply rounded-b-none;
+  }
+
+  .problem-hints ol,
+  .solution-content {
+    @apply p-4;
+  }
+
+  .solution.hidden {
+    @apply hidden;
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════════════
+   * FOOTNOTE MODAL STYLES
+   * ══════════════════════════════════════════════════════════════════════════════
+   */
+
+  .footnote-modal-trigger {
+    @apply inline-flex items-center justify-center w-5 h-5 text-xs rounded-full;
+    @apply bg-primary/20 text-primary hover:bg-primary/30 cursor-pointer;
+    @apply border-none transition-colors ml-1;
+    vertical-align: super;
+    font-size: 0.7em;
+    line-height: 1;
+  }
+
+  .footnote-modals {
+    display: contents;
+  }
+
+  .footnote-modal {
+    @apply fixed inset-0 z-[100] flex items-center justify-center p-4;
+    @apply bg-black/50 backdrop-blur-sm;
+    @apply opacity-0 pointer-events-none transition-opacity duration-200;
+  }
+
+  .footnote-modal.open {
+    @apply opacity-100 pointer-events-auto;
+  }
+
+  .footnote-modal-content {
+    @apply relative bg-background rounded-lg shadow-xl max-w-lg w-full max-h-[80vh] overflow-auto;
+    @apply border p-6;
+  }
+
+  .footnote-modal-close {
+    @apply absolute top-3 right-3 w-8 h-8 flex items-center justify-center;
+    @apply text-muted-foreground hover:text-foreground rounded-full;
+    @apply hover:bg-muted transition-colors text-xl leading-none cursor-pointer;
+    @apply border-none bg-transparent;
+  }
+
+  .footnote-modal-body {
+    @apply text-sm leading-relaxed;
+  }
+
+  .footnote-modal-body strong {
+    @apply font-semibold text-foreground block mb-2;
+  }
+
+  .footnote-modal-body a {
+    @apply text-primary hover:underline;
+  }
+
+  .footnote-modal-body br {
+    @apply block mb-2;
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════════════
+   * TUFTE-STYLE SIDENOTES
+   * On desktop: appear in the right margin
+   * On mobile: collapse to toggleable footnotes
+   * ══════════════════════════════════════════════════════════════════════════════
+   */
+
+  /* Counter for sidenote numbers */
+  .docs-markdown-content {
+    counter-reset: sidenote-counter;
+  }
+
+  /* The clickable number in the text */
+  .sidenote-number {
+    counter-increment: sidenote-counter;
+  }
+
+  .sidenote-number::after {
+    content: counter(sidenote-counter);
+    font-size: 0.75rem;
+    vertical-align: super;
+    line-height: 0;
+    @apply text-primary font-semibold cursor-pointer;
+  }
+
+  /* Margin note indicator (dagger symbol) */
+  .marginnote-number::after {
+    content: "†";
+    font-size: 0.75rem;
+    vertical-align: super;
+    line-height: 0;
+    @apply text-primary font-semibold cursor-pointer;
+  }
+
+  /* Hidden checkbox for mobile toggle */
+  .sidenote-toggle,
+  .marginnote-toggle {
+    display: none;
+  }
+
+  /* The sidenote content */
+  .sidenote,
+  .marginnote {
+    @apply text-sm text-muted-foreground leading-relaxed;
+  }
+
+  /* Desktop (lg+): sidenotes in the right margin - ONLY on pages with .has-sidenotes */
+  @media (min-width: 1024px) {
+    .has-sidenotes .sidenote,
+    .has-sidenotes .marginnote {
+      float: right;
+      clear: right;
+      margin-right: -17rem;
+      width: 15rem;
+      margin-top: 0.25rem;
+      margin-bottom: 1rem;
+      @apply pl-3 border-l-2 border-primary/30;
+    }
+
+    .has-sidenotes .sidenote::before {
+      content: counter(sidenote-counter) ". ";
+      @apply font-semibold text-primary;
+    }
+
+    /* Pages WITHOUT .has-sidenotes: show sidenotes inline */
+    #main-content:not(.has-sidenotes) .sidenote,
+    #main-content:not(.has-sidenotes) .marginnote {
+      display: inline;
+      @apply text-sm text-muted-foreground;
+    }
+
+    #main-content:not(.has-sidenotes) .sidenote::before {
+      content: "[" counter(sidenote-counter) ": ";
+      @apply font-semibold text-primary;
+    }
+
+    #main-content:not(.has-sidenotes) .sidenote::after {
+      content: "]";
+    }
+  }
+
+  /* Large desktop: wider sidenotes - only for .has-sidenotes */
+  @media (min-width: 1280px) {
+    .has-sidenotes .sidenote,
+    .has-sidenotes .marginnote {
+      margin-right: -20rem;
+      width: 18rem;
+    }
+  }
+
+  /* Extra large desktop: even wider sidenotes - only for .has-sidenotes */
+  @media (min-width: 1536px) {
+    .has-sidenotes .sidenote,
+    .has-sidenotes .marginnote {
+      margin-right: -22rem;
+      width: 20rem;
+    }
+  }
+
+  /* Mobile and tablet: collapse to inline footnotes */
+  @media (max-width: 1023px) {
+    .sidenote-number::after {
+      @apply cursor-pointer hover:text-primary-dark;
+    }
+
+    .sidenote,
+    .marginnote {
+      display: none;
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      @apply rounded-lg bg-muted/50 border border-border;
+    }
+
+    .sidenote::before {
+      content: "Note " counter(sidenote-counter) ": ";
+      @apply font-semibold text-primary;
+    }
+
+    .marginnote::before {
+      content: "Note: ";
+      @apply font-semibold text-primary;
+    }
+
+    /* Show sidenote when checkbox is checked */
+    .sidenote-toggle:checked + .sidenote {
+      display: block;
+    }
+
+    /* Show margin note when its toggle is checked */
+    .marginnote-toggle:checked + .marginnote {
+      display: block;
+    }
   }
 }
 

@@ -1,28 +1,231 @@
 ---
-import CtaGlow from "@/docs/components/cta/CtaGlow.astro";
-import FeatureGrid from "@/docs/components/features/FeatureGrid.astro";
-import Hero from "@/docs/components/hero/Hero.astro";
-import Testimonials from "@/docs/components/testimonials/Testimonials.astro";
-import { docsRoute } from "@/docs/js/docsUtils";
-import { getLocaleFromUrl } from "@/docs/js/localeUtils";
-import { getLocalizedRoute } from "@/docs/js/translationUtils";
-import { getTranslatedData } from "@/docs/js/translationUtils";
-import BaseLayoutDocs from "@/docs/layouts/BaseLayoutDocs.astro";
+export const prerender = true;
 
-const currLocale = getLocaleFromUrl(Astro.url);
-const siteData = getTranslatedData("siteData", currLocale);
+import BaseLayoutDocs from "@/docs/layouts/BaseLayoutDocs.astro";
+import { docsRoute } from "@/docs/js/docsUtils";
 ---
 
-<BaseLayoutDocs title={siteData.title} description={siteData.description}>
-  <main class="overflow-hidden">
-    <Hero />
-    <FeatureGrid />
-    <Testimonials />
-    <CtaGlow
-      title="Ready to build your documentation?"
-      description="Get started with Pathfinder today and create beautiful, maintainable documentation that your users will love."
-      primaryLink={getLocalizedRoute(currLocale, `/${docsRoute}/getting-started`)}
-      githubLink="https://github.com/Boston343"
-    />
+<BaseLayoutDocs title="Advanced Algorithms" description="A foray into measured compromises — exploring randomized, approximation, and parameterized algorithms.">
+  <main class="min-h-screen">
+    <!-- Hero Section -->
+    <section class="relative py-20 md:py-32 overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10"></div>
+      <div class="max-w-4xl mx-auto px-6 relative">
+        <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-4">
+          Advanced Algorithms
+        </h1>
+        <p class="text-xl md:text-2xl text-muted-foreground font-medium mb-8">
+          A foray into measured compromises.
+        </p>
+        <p class="text-lg text-muted-foreground max-w-2xl mb-10 leading-relaxed">
+          When designing algorithms, we usually demand speed and accuracy on all inputs.
+          This course explores what happens when we relax just one of these demands.
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <a href={`/${docsRoute}/01-greedy`} class="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors">
+            Browse Notes
+          </a>
+          <a href="#editions" class="px-6 py-3 border rounded-lg font-medium hover:bg-muted transition-colors">
+            Course Editions
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Three Approaches Section -->
+    <section class="py-16 md:py-24 border-t">
+      <div class="max-w-5xl mx-auto px-6">
+        <h2 class="text-2xl md:text-3xl font-bold mb-12 text-center">Three Ways to Cope with NP-Completeness</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="p-6 rounded-xl border bg-card hover:shadow-lg transition-shadow">
+            <div class="w-12 h-12 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold mb-2">Relax Accuracy</h3>
+            <p class="text-muted-foreground text-sm leading-relaxed">
+              Accept approximate or probabilistic answers through <strong>randomized</strong> and <strong>approximation algorithms</strong>.
+            </p>
+          </div>
+          <div class="p-6 rounded-xl border bg-card hover:shadow-lg transition-shadow">
+            <div class="w-12 h-12 rounded-lg bg-green-500/10 text-green-600 dark:text-green-400 flex items-center justify-center mb-4">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold mb-2">Restrict Inputs</h3>
+            <p class="text-muted-foreground text-sm leading-relaxed">
+              Focus on structured instances using <strong>parameterized algorithms</strong> and algorithms for special input classes.
+            </p>
+          </div>
+          <div class="p-6 rounded-xl border bg-card hover:shadow-lg transition-shadow">
+            <div class="w-12 h-12 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-4">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold mb-2">Accept Slowness</h3>
+            <p class="text-muted-foreground text-sm leading-relaxed">
+              Trade time for correctness with <strong>exact algorithms</strong> that are exponential but practical.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Curriculum Overview -->
+    <section class="py-16 md:py-24 bg-muted/30 border-t">
+      <div class="max-w-5xl mx-auto px-6">
+        <h2 class="text-2xl md:text-3xl font-bold mb-12 text-center">Curriculum</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="p-6 rounded-xl border bg-card">
+            <span class="text-xs font-semibold uppercase tracking-wider text-primary">Prelude</span>
+            <h3 class="text-lg font-semibold mt-2 mb-3">Foundations</h3>
+            <ul class="space-y-2 text-sm text-muted-foreground">
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                <a href={`/${docsRoute}/01-greedy`} class="hover:text-foreground transition-colors">Greedy Algorithms & Matroids</a>
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                <a href={`/${docsRoute}/03-maxflow`} class="hover:text-foreground transition-colors">Flows, Cuts & Reductions</a>
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                <a href={`/${docsRoute}/04-hardness`} class="hover:text-foreground transition-colors">NP-Completeness & Hardness</a>
+              </li>
+            </ul>
+          </div>
+          <div class="p-6 rounded-xl border bg-card">
+            <span class="text-xs font-semibold uppercase tracking-wider text-primary">Coping Strategies</span>
+            <h3 class="text-lg font-semibold mt-2 mb-3">Core Techniques</h3>
+            <ul class="space-y-2 text-sm text-muted-foreground">
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                <a href={`/${docsRoute}/05-randomized`} class="hover:text-foreground transition-colors">Randomized Algorithms</a>
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                <a href={`/${docsRoute}/06-fpt`} class="hover:text-foreground transition-colors">Parameterized Algorithms</a>
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                <a href={`/${docsRoute}/07-approx`} class="hover:text-foreground transition-colors">Approximation Algorithms</a>
+              </li>
+            </ul>
+          </div>
+          <div class="p-6 rounded-xl border bg-card">
+            <span class="text-xs font-semibold uppercase tracking-wider text-primary">Combined Strategies</span>
+            <h3 class="text-lg font-semibold mt-2 mb-3">Advanced Techniques</h3>
+            <ul class="space-y-2 text-sm text-muted-foreground">
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                <a href={`/${docsRoute}/09-approx-random`} class="hover:text-foreground transition-colors">Randomized Approximation</a>
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                <a href={`/${docsRoute}/10-random-fpt`} class="hover:text-foreground transition-colors">Randomized FPT</a>
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                <a href={`/${docsRoute}/11-param-approx`} class="hover:text-foreground transition-colors">Parameterized Approximation</a>
+              </li>
+            </ul>
+          </div>
+          <div class="p-6 rounded-xl border bg-card">
+            <span class="text-xs font-semibold uppercase tracking-wider text-primary">Hardness</span>
+            <h3 class="text-lg font-semibold mt-2 mb-3">Lower Bounds</h3>
+            <ul class="space-y-2 text-sm text-muted-foreground">
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                <a href={`/${docsRoute}/08-hardness`} class="hover:text-foreground transition-colors">Hardness of Approximation</a>
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                ETH, SETH & Fine-Grained Complexity
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                PCP Theorem & Unique Games
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Editions Section -->
+    <section id="editions" class="py-16 md:py-24 border-t">
+      <div class="max-w-4xl mx-auto px-6">
+        <h2 class="text-2xl md:text-3xl font-bold mb-4 text-center">Course Editions</h2>
+        <p class="text-muted-foreground text-center mb-12 max-w-xl mx-auto">
+          This course has been offered multiple times at IIT Gandhinagar. Each edition includes schedules, materials, and grading policies.
+        </p>
+        <div class="grid md:grid-cols-2 gap-6">
+          <a href={`/${docsRoute}/editions/2026-01-CS614`} class="group p-6 rounded-xl border-2 border-primary/50 bg-card hover:border-primary hover:shadow-lg transition-all">
+            <div class="flex items-start justify-between mb-3">
+              <h3 class="text-xl font-semibold group-hover:text-primary transition-colors">Jan-Apr 2026</h3>
+              <svg class="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+            <div class="flex items-end justify-between">
+              <p class="text-sm text-muted-foreground">
+                IIT Gandhinagar. Ongoing semester with lecture schedule, quizzes, and references.
+              </p>
+              <span class="ml-3 shrink-0 px-2 py-1 text-xs font-medium bg-primary/10 text-primary rounded">Current</span>
+            </div>
+          </a>
+          <a href={`/${docsRoute}/editions/2019-01-CS614`} class="group p-6 rounded-xl border bg-card hover:border-primary/50 hover:shadow-lg transition-all">
+            <div class="flex items-start justify-between mb-3">
+              <h3 class="text-xl font-semibold group-hover:text-primary transition-colors">Jan-Apr 2019</h3>
+              <svg class="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+            <p class="text-sm text-muted-foreground">
+              IIT Gandhinagar. Complete course archive with all materials and lecture recordings.
+            </p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- References Section -->
+    <section class="py-16 md:py-24 bg-muted/30 border-t">
+      <div class="max-w-4xl mx-auto px-6">
+        <h2 class="text-2xl md:text-3xl font-bold mb-8 text-center">References</h2>
+        <div class="grid gap-4">
+          <div class="p-4 rounded-lg border bg-card">
+            <h3 class="font-semibold">Parameterized Algorithms</h3>
+            <p class="text-sm text-muted-foreground">Cygan, Fomin, Kowalik, Lokshtanov, Marx, Pilipczuk, Pilipczuk, Saurabh — Springer, 2015</p>
+            <a href="https://parameterized-algorithms.mimuw.edu.pl/" target="_blank" rel="noopener" class="text-xs text-primary hover:underline">Book website</a>
+          </div>
+          <div class="p-4 rounded-lg border bg-card">
+            <h3 class="font-semibold">The Design of Approximation Algorithms</h3>
+            <p class="text-sm text-muted-foreground">Williamson & Shmoys — Cambridge University Press, 2011</p>
+            <a href="https://www.designofapproxalgs.com/" target="_blank" rel="noopener" class="text-xs text-primary hover:underline">Free PDF available</a>
+          </div>
+          <div class="p-4 rounded-lg border bg-card">
+            <h3 class="font-semibold">Probability and Computing</h3>
+            <p class="text-sm text-muted-foreground">Mitzenmacher & Upfal — Cambridge University Press, 2017</p>
+          </div>
+          <div class="p-4 rounded-lg border bg-card">
+            <h3 class="font-semibold">Exact Exponential Algorithms</h3>
+            <p class="text-sm text-muted-foreground">Fomin & Kratsch — Springer, 2010</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer CTA -->
+    <section class="py-12 border-t">
+      <div class="max-w-4xl mx-auto px-6 text-center">
+        <p class="text-muted-foreground">
+          Taught by <a href="https://www.neeldhara.com" class="text-primary hover:underline">Neeldhara Misra</a> at IIT Gandhinagar
+        </p>
+      </div>
+    </section>
   </main>
 </BaseLayoutDocs>

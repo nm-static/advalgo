@@ -1,4 +1,5 @@
 import mdx from "@astrojs/mdx";
+import netlify from "@astrojs/netlify";
 import sitemap from "@astrojs/sitemap";
 import compress from "@playform/compress";
 import tailwindcss from "@tailwindcss/vite";
@@ -7,13 +8,19 @@ import AutoImport from "astro-auto-import";
 import expressiveCode from "astro-expressive-code";
 import icon from "astro-icon";
 
+// Only use Netlify adapter in production build
+const isProduction = process.env.NODE_ENV === "production" || process.argv.includes("build");
+
 // https://astro.build/config
 export default defineConfig({
-  site: "https://pathfinder.cosmicthemes.com",
+  site: "https://advalgo.neeldhara.courses",
+  // Server mode for SSR pages
+  output: "server",
+  adapter: isProduction ? netlify() : undefined,
   // i18n configuration must match src/docs/config/translationData.json.ts
   i18n: {
     defaultLocale: "en",
-    locales: ["en", "fr"],
+    locales: ["en"],
     routing: {
       prefixDefaultLocale: false,
     },

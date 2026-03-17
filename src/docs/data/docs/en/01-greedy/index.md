@@ -1,0 +1,15 @@
+---
+title: "Greedy"
+description: "Greedy - Advanced Algorithms"
+section: main
+sidebar:
+  order: 0
+  label: "Overview"
+---
+
+
+It is perhaps not often that greed is good, but in the context of the problems that we encounter in this section, we are going to make greedy look good! Read on to find out more about:
+
+1. [Files on a Tape](./file-storage/)
+2. [Dance Classes](./scheduling/)
+3. [Stable Marriages](./stable-matchings/)

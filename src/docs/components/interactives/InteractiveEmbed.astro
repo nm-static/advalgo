@@ -1,0 +1,101 @@
+---
+/**
+ * This component finds all interactive placeholders on the page
+ * and renders either the actual interactive or a placeholder.
+ *
+ * Add this to the docs layout to enable interactives.
+ */
+import interactiveDescriptions from "./interactives.json";
+
+// Import implemented interactives here
+import TapeSort from "./TapeSort.astro";
+
+const implementedInteractives: Record<string, any> = {
+  "tape-sort": TapeSort,
+};
+
+// Get all placeholders that need server-side rendering
+const { slots } = Astro;
+---
+
+<script define:vars={{ interactiveDescriptions, implementedIds: Object.keys(implementedInteractives) }}>
+  // Client-side hydration for interactive placeholders
+  document.addEventListener('DOMContentLoaded', () => {
+    const placeholders = document.querySelectorAll('.interactive-embed[data-interactive-id]');
+
+    placeholders.forEach(placeholder => {
+      const id = placeholder.getAttribute('data-interactive-id');
+      if (!id) return;
+
+      const description = interactiveDescriptions[id] || 'No description available.';
+      const isImplemented = implementedIds.includes(id);
+
+      if (!isImplemented) {
+        // Render placeholder
+        placeholder.innerHTML = `
+          <div class="interactive-placeholder">
+            <div class="interactive-placeholder-header">
+              <span class="interactive-placeholder-icon">🎮</span>
+              <span class="interactive-placeholder-title">Interactive: ${id}</span>
+            </div>
+            <p class="interactive-placeholder-desc">${description}</p>
+            <p class="interactive-placeholder-note">(Component not yet implemented)</p>
+          </div>
+        `;
+      }
+      // Implemented interactives are handled server-side
+    });
+  });
+
+  // Re-run on Astro page navigation
+  document.addEventListener('astro:page-load', () => {
+    const event = new Event('DOMContentLoaded');
+    document.dispatchEvent(event);
+  });
+</script>
+
+{/* Include implemented interactive components (their templates and scripts) */}
+<TapeSort />
+
+<style is:global>
+  .interactive-placeholder {
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    border: 2px dashed rgba(14, 165, 233, 0.5);
+    border-radius: 0.5rem;
+    background: rgba(14, 165, 233, 0.05);
+  }
+
+  .interactive-placeholder-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .interactive-placeholder-icon {
+    font-size: 1.5rem;
+  }
+
+  .interactive-placeholder-title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    color: rgb(2, 132, 199);
+  }
+
+  :global(.dark) .interactive-placeholder-title {
+    color: rgb(56, 189, 248);
+  }
+
+  .interactive-placeholder-desc {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+    font-style: italic;
+  }
+
+  .interactive-placeholder-note {
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+    margin-top: 0.75rem;
+  }
+</style>
