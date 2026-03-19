@@ -9,5 +9,6 @@ sidebar:
 
 - [CNF Greedy Approximation](./cnf-greedy-approximation/)
 - [Eternal Vertex Cover Approximation](./evc-approximation/)
+- [Knapsack LP Formulation](./knapsack-lp-formulation/)
 - [Rounding for Vertex Cover](./vertex-cover-rounding/)
 - [Vertex Cover LP Matrix Notation](./vertex-cover-lp-matrix-notation/)
