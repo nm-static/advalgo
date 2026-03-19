@@ -3,8 +3,8 @@ title: "Preface"
 description: "Preface - Advanced Algorithms"
 section: main
 sidebar:
-  order: 1
-  label: "Preface"
+  order: 0
+  label: "Overview"
 ---
 
 
