@@ -86,21 +86,21 @@ check_prereqs() {
 pull_obsidian() {
   log "Pulling latest from Obsidian vault..."
   cd "$OBSIDIAN_REPO"
-  git fetch origin
-  git checkout main
-  git pull origin main
+  git fetch origin >&2
+  git checkout main >&2
+  git pull origin main >&2
 }
 
 # Prepare staging branch
 prepare_staging() {
   log "Preparing staging branch..."
   cd "$ADVALGO_REPO"
-  git fetch origin
-  git checkout staging
-  git pull origin staging
+  git fetch origin >&2
+  git checkout staging >&2
+  git pull origin staging >&2
 
   # Ensure we have the latest parser
-  git merge origin/main --no-edit || true
+  git merge origin/main --no-edit >&2 || true
 }
 
 # Run the parser
@@ -111,7 +111,7 @@ run_parser() {
   # Set environment variables for the parser
   export OBSIDIAN_BASE="$OBSIDIAN_REPO"
 
-  node parse.mjs
+  node parse.mjs >&2
 }
 
 # Commit and push changes
@@ -119,7 +119,7 @@ commit_and_push() {
   cd "$ADVALGO_REPO"
 
   # Stage all changes
-  git add -A
+  git add -A >&2
 
   # Check if there are changes to commit
   if git diff --cached --quiet; then
@@ -139,12 +139,12 @@ Changed files ($file_count total):
 $changed_files"
 
   # Commit
-  git commit -m "$commit_msg"
+  git commit -m "$commit_msg" >&2
   local commit_hash=$(git rev-parse --short HEAD)
 
   # Push to staging
   log "Pushing to staging branch..."
-  git push origin staging
+  git push origin staging >&2
 
   log "Successfully pushed commit $commit_hash"
   output_json "success" "Content synced to staging" "true" "$commit_hash"

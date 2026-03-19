@@ -72,11 +72,11 @@ merge_to_main() {
   cd "$ADVALGO_REPO"
 
   # Fetch latest
-  git fetch origin
+  git fetch origin >&2
 
   # Checkout main and pull
-  git checkout main
-  git pull origin main
+  git checkout main >&2
+  git pull origin main >&2
 
   # Check if staging has changes not in main
   local staging_ahead=$(git rev-list --count main..origin/staging)
@@ -90,13 +90,13 @@ merge_to_main() {
   log "Staging is $staging_ahead commit(s) ahead of main"
 
   # Merge staging into main
-  git merge origin/staging --no-edit -m "Merge staging: content update $(date +%Y-%m-%d)"
+  git merge origin/staging --no-edit -m "Merge staging: content update $(date +%Y-%m-%d)" >&2
 
   local commit_hash=$(git rev-parse --short HEAD)
 
   # Push to main
   log "Pushing to main..."
-  git push origin main
+  git push origin main >&2
 
   log "Successfully deployed commit $commit_hash to production"
   output_json "success" "Deployed to production" "$commit_hash"
