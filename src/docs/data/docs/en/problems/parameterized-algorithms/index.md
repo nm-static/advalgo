@@ -7,4 +7,5 @@ sidebar:
   label: "Parameterized Algorithms"
 ---
 
+- [FVS Iterative Compression](./fvs-iterative-compression-1/)
 - [Split Vertex Deletion](./split-vertex-deletion/)
