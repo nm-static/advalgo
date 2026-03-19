@@ -13,7 +13,7 @@
 
 set -e
 
-OBSIDIAN_REPO="${OBSIDIAN_REPO:-$HOME/repos/nm-obsidian}"
+OBSIDIAN_REPO="${OBSIDIAN_REPO:-$HOME/repos/nm-obsidian/teaching}"
 ADVALGO_REPO="${ADVALGO_REPO:-$HOME/repos/nm-static/advalgo}"
 STAGING_URL="https://staging--advalgo.netlify.app"
 
@@ -109,7 +109,7 @@ run_parser() {
   cd "$ADVALGO_REPO"
 
   # Set environment variables for the parser
-  export OBSIDIAN_BASE="$OBSIDIAN_REPO/teaching"
+  export OBSIDIAN_BASE="$OBSIDIAN_REPO"
 
   node parse.mjs
 }
