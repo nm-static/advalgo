@@ -69,7 +69,7 @@ EOF
 }
 
 # Convert file path to preview URL
-# src/docs/data/docs/en/01-greedy/file-storage.md -> https://staging--advalgo.netlify.app/docs/01-greedy/file-storage
+# src/docs/data/docs/en/01-greedy/file-storage.md -> https://staging--advalgo.netlify.app/materials/01-greedy/file-storage
 file_to_url() {
   local file="$1"
   # Only process docs content files
@@ -81,7 +81,7 @@ file_to_url() {
     if [[ "$path" == */index ]]; then
       path="${path%/index}"
     fi
-    echo "${STAGING_URL}/docs/${path}"
+    echo "${STAGING_URL}/materials/${path}"
   fi
 }
 
