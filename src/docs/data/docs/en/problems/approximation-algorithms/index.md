@@ -7,4 +7,6 @@ sidebar:
   label: "Approximation Algorithms"
 ---
 
+- [CNF Greedy Approximation](./cnf-greedy-approximation/)
 - [Eternal Vertex Cover Approximation](./evc-approximation/)
+- [Rounding for Vertex Cover](./vertex-cover-rounding/)

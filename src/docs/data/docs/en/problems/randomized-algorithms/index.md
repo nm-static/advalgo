@@ -3,7 +3,7 @@ title: "Randomized Algorithms"
 description: "Problems on Randomized Algorithms"
 section: problems
 sidebar:
-  order: 4
+  order: 5
   label: "Randomized Algorithms"
 ---
 
