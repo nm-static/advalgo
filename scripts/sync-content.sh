@@ -42,6 +42,9 @@ error() {
   echo -e "${RED}[ERROR]${NC} $1" >&2
 }
 
+# Global variable to store Obsidian commit message
+OBSIDIAN_COMMIT_MSG=""
+
 # Output JSON result
 output_json() {
   local status="$1"
@@ -55,12 +58,16 @@ output_json() {
     pages_json="[]"
   fi
 
+  # Escape commit message for JSON
+  local escaped_commit_msg=$(echo "$OBSIDIAN_COMMIT_MSG" | sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g' | tr -d '\n')
+
   cat << EOF
 {
   "status": "$status",
   "message": "$message",
   "changes": $changes,
   "commit": "$commit_hash",
+  "commit_message": "$escaped_commit_msg",
   "preview_url": "$STAGING_URL",
   "pages": $pages_json,
   "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
@@ -113,6 +120,10 @@ pull_obsidian() {
   git fetch origin >&2
   git checkout main >&2
   git pull origin main >&2
+
+  # Capture the latest commit message for card title
+  OBSIDIAN_COMMIT_MSG=$(git log -1 --pretty=%s)
+  log "Latest Obsidian commit: $OBSIDIAN_COMMIT_MSG"
 }
 
 # Prepare staging branch
