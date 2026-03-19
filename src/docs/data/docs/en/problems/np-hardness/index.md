@@ -7,4 +7,5 @@ sidebar:
   label: "NP-Hardness"
 ---
 
+- [Ferrying the Deceased](./ferrying-easy/)
 - [Marbles Elimination](./marbles/)
