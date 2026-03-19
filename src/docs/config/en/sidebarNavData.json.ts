@@ -12,6 +12,10 @@ const sidebarNavData: DocsSidebarNavData = {
       icon: "tabler/file-text",
       sections: [
         {
+          id: "00-preface",
+          title: "Preface",
+        },
+        {
           id: "01-greedy",
           title: "1. Greedy",
         },
@@ -80,8 +84,28 @@ const sidebarNavData: DocsSidebarNavData = {
       icon: "tabler/school",
       sections: [
         {
+          id: "problems",
+          title: "Overview",
+        },
+        {
           id: "problems/approximation-algorithms",
           title: "Approximation Algorithms",
+        },
+        {
+          id: "problems/greedy",
+          title: "Greedy",
+        },
+        {
+          id: "problems/np-hardness",
+          title: "NP-Hardness",
+        },
+        {
+          id: "problems/parameterized-algorithms",
+          title: "Parameterized Algorithms",
+        },
+        {
+          id: "problems/randomized-algorithms",
+          title: "Randomized Algorithms",
         },
       ],
     },
