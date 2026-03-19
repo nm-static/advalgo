@@ -48,6 +48,12 @@ output_json() {
   local message="$2"
   local changes="$3"
   local commit_hash="$4"
+  local pages_json="$5"
+
+  # Default to empty array if no pages
+  if [ -z "$pages_json" ]; then
+    pages_json="[]"
+  fi
 
   cat << EOF
 {
@@ -56,9 +62,27 @@ output_json() {
   "changes": $changes,
   "commit": "$commit_hash",
   "preview_url": "$STAGING_URL",
+  "pages": $pages_json,
   "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 }
 EOF
+}
+
+# Convert file path to preview URL
+# src/docs/data/docs/en/01-greedy/file-storage.md -> https://staging--advalgo.netlify.app/docs/01-greedy/file-storage
+file_to_url() {
+  local file="$1"
+  # Only process docs content files
+  if [[ "$file" == src/docs/data/docs/en/*.md ]]; then
+    # Strip prefix and .md suffix
+    local path="${file#src/docs/data/docs/en/}"
+    path="${path%.md}"
+    # Skip index files, use parent path
+    if [[ "$path" == */index ]]; then
+      path="${path%/index}"
+    fi
+    echo "${STAGING_URL}/docs/${path}"
+  fi
 }
 
 # Check prerequisites
@@ -124,13 +148,29 @@ commit_and_push() {
   # Check if there are changes to commit
   if git diff --cached --quiet; then
     log "No changes to commit"
-    output_json "no_changes" "No content changes detected" "false" ""
+    output_json "no_changes" "No content changes detected" "false" "" "[]"
     return 0
   fi
 
   # Get list of changed files for the commit message
   local changed_files=$(git diff --cached --name-only | head -10)
   local file_count=$(git diff --cached --name-only | wc -l | tr -d ' ')
+
+  # Build JSON array of changed page URLs
+  local pages_json="["
+  local first=true
+  while IFS= read -r file; do
+    local url=$(file_to_url "$file")
+    if [ -n "$url" ]; then
+      if [ "$first" = true ]; then
+        first=false
+      else
+        pages_json+=","
+      fi
+      pages_json+="\"$url\""
+    fi
+  done < <(git diff --cached --name-only)
+  pages_json+="]"
 
   # Create commit message
   local commit_msg="Content sync: $(date +%Y-%m-%d)
@@ -147,7 +187,7 @@ $changed_files"
   git push origin staging >&2
 
   log "Successfully pushed commit $commit_hash"
-  output_json "success" "Content synced to staging" "true" "$commit_hash"
+  output_json "success" "Content synced to staging" "true" "$commit_hash" "$pages_json"
 }
 
 # Main execution
