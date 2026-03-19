@@ -3,7 +3,7 @@ title: "NP-Hardness"
 description: "Problems on NP-Hardness"
 section: problems
 sidebar:
-  order: 2
+  order: 3
   label: "NP-Hardness"
 ---
 
