@@ -7,4 +7,4 @@ sidebar:
   label: "Overview"
 ---
 
-In this section we will discuss reductions from hard problems. 
+In this section we will discuss reductions from hard problems, for example from SAT.
