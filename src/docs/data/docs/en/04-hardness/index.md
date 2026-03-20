@@ -7,3 +7,4 @@ sidebar:
   label: "Overview"
 ---
 
+In this section we will discuss reductions from hard problems. 
