@@ -83,5 +83,8 @@ const { title, description, image, noindex = false } = Astro.props as Props;
 
 <Seo title={title} description={description} image={image} noindex={noindex} />
 
+<!-- Rybbit Analytics -->
+<script src="https://analytics.neeldhara.website/api/script.js" async data-site-id="6"></script>
+
 <!-- no fallback as I saw issues with firefox fallback -->
 {siteSettings.useViewTransitions && <ClientRouter fallback="none" />}
