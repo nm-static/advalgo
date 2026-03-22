@@ -57,6 +57,7 @@
 		"typescript-eslint": "^8.35.0"
 	},
 	"overrides": {
-		"sharp": "^0.33.0"
+		"sharp": "^0.33.0",
+		"fast-xml-parser": ">=5.3.5"
 	}
 }
