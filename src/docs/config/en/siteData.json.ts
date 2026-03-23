@@ -24,7 +24,7 @@ const docsSiteData: DocsSiteData = {
     },
     {
       social: "LinkedIn",
-      link: "https://www.linkedin.com/in/neeldhara/",
+      link: "https://www.linkedin.com/in/neeldhara-misra-a54b6920/",
       icon: "tabler/brand-linkedin",
     },
     {
