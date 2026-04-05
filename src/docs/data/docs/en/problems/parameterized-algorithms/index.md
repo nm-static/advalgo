@@ -9,4 +9,5 @@ sidebar:
 
 - [FVS Iterative Compression](./fvs-iterative-compression-1/)
 - [Hitting Set Iterative Compression](./hitting-set-iterative-compression/)
+- [Odd Cycle Transversal via Iterative Compression](./oct-iterative-compression/)
 - [Split Vertex Deletion](./split-vertex-deletion/)

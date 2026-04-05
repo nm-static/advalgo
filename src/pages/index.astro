@@ -26,7 +26,10 @@ import { docsRoute } from "@/docs/js/docsUtils";
             Browse Notes
           </a>
           <a href="#editions" class="px-6 py-3 border rounded-lg font-medium hover:bg-muted transition-colors">
-            Course Editions
+            Course Runs
+          </a>
+          <a href={`/${docsRoute}/editions/2026-01-cs614`} class="px-6 py-3 border rounded-lg font-medium hover:bg-muted transition-colors">
+            Latest Edition
           </a>
         </div>
       </div>
@@ -116,12 +119,12 @@ import { docsRoute } from "@/docs/js/docsUtils";
     <!-- Editions Section -->
     <section id="editions" class="py-16 md:py-24 border-t">
       <div class="max-w-4xl mx-auto px-6">
-        <h2 class="text-2xl md:text-3xl font-bold mb-4 text-center">Course Editions</h2>
+        <h2 class="text-2xl md:text-3xl font-bold mb-4 text-center">Course Runs</h2>
         <p class="text-muted-foreground text-center mb-12 max-w-xl mx-auto">
           This course has been offered multiple times at IIT Gandhinagar. Each edition includes schedules, materials, and grading policies.
         </p>
         <div class="grid md:grid-cols-2 gap-6">
-          <a href={`/${docsRoute}/editions/2026-01-CS614`} class="group p-6 rounded-xl border-2 border-primary/50 bg-card hover:border-primary hover:shadow-lg transition-all">
+          <a href={`/${docsRoute}/editions/2026-01-cs614`} class="group p-6 rounded-xl border-2 border-primary/50 bg-card hover:border-primary hover:shadow-lg transition-all">
             <div class="flex items-start justify-between mb-3">
               <h3 class="text-xl font-semibold group-hover:text-primary transition-colors">Jan-Apr 2026</h3>
               <svg class="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -135,7 +138,7 @@ import { docsRoute } from "@/docs/js/docsUtils";
               <span class="ml-3 shrink-0 px-2 py-1 text-xs font-medium bg-primary/10 text-primary rounded">Current</span>
             </div>
           </a>
-          <a href={`/${docsRoute}/editions/2019-01-CS614`} class="group p-6 rounded-xl border bg-card hover:border-primary/50 hover:shadow-lg transition-all">
+          <a href={`/${docsRoute}/editions/2019-01-cs614`} class="group p-6 rounded-xl border bg-card hover:border-primary/50 hover:shadow-lg transition-all">
             <div class="flex items-start justify-between mb-3">
               <h3 class="text-xl font-semibold group-hover:text-primary transition-colors">Jan-Apr 2019</h3>
               <svg class="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
