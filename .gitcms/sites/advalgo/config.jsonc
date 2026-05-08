@@ -1,0 +1,46 @@
+{
+  "version": "1",
+  "media_path": "/public",
+  "ssg_framework": "astro",
+  "frontmatter_format": "yaml",
+  "sitemap_url": "https://advalgo.neeldhara.courses/sitemap-index.xml",
+  "publishing_mode": "editorial_workflow",
+  "collections": [
+    {
+      "name": "en",
+      "git_path": "/src/docs/data/docs/en/",
+      "file_extension": ".md",
+      "filename_pattern": "",
+      "collection_type": "grouped",
+      "frontmatter_schema": [
+        {
+          "name": "title",
+          "type": "title",
+          "label": "Title"
+        },
+        {
+          "name": "description",
+          "type": "richtext",
+          "label": "Description"
+        },
+        {
+          "name": "section",
+          "type": "text",
+          "label": "Section"
+        },
+        {
+          "name": "sidebar",
+          "type": "json",
+          "label": "Sidebar"
+        }
+      ]
+    },
+    {
+      "name": "scripts",
+      "git_path": "/scripts/",
+      "file_extension": ".md",
+      "filename_pattern": "",
+      "collection_type": "flat"
+    }
+  ]
+}

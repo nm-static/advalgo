@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "sites": [
+    {
+      "key": "advalgo",
+      "display_name": "Advalgo",
+      "website_url": "https://advalgo.neeldhara.courses",
+      "root_path": ""
+    }
+  ]
+}
